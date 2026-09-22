@@ -4,7 +4,7 @@ $navItems = [
     'home' => ['label' => 'Home', 'href' => '/'],
     'tand' => ['label' => 'Tand', 'href' => '/tand'],
     'team' => ['label' => 'Team', 'href' => '/team'],
-    'contact' => ['label' => 'Contact', 'href' => '/#contact'],
+    'contact' => ['label' => 'Contact', 'href' => '#contact'],
 ];
 ?>
 <header class="site-nav">
