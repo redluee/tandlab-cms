@@ -516,14 +516,41 @@ main {
     color: var(--color-white);
 }
 
+.contact-info {
+    font-size: 1.05rem;
+}
+
 .contact-info dt {
     color: var(--color-green);
     font-weight: 700;
-    margin-top: 18px;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 24px;
+}
+
+.contact-info dt:first-child {
+    margin-top: 0;
 }
 
 .contact-info dd {
-    margin: 4px 0 0;
+    margin: 6px 0 0;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.contact-info a {
+    color: var(--color-green);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: rgba(120, 195, 156, 0.45);
+    text-underline-offset: 3px;
+}
+
+.contact-info a:hover,
+.contact-info a:focus-visible {
+    color: var(--color-white);
+    text-decoration-color: var(--color-white);
 }
 
 .contact-map {
