@@ -16,6 +16,16 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+}
+
 body {
     margin: 0;
     font-family: var(--font-base);
@@ -504,6 +514,7 @@ main {
 .contact-section {
     background: var(--color-gray-900);
     color: var(--color-white);
+    scroll-margin-top: 72px;
 }
 
 .contact-grid {
