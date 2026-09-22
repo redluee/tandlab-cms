@@ -13,6 +13,7 @@ $navItems = [
             <img src="/uploads/logo.webp" alt="Tandlab logo">
         </a>
         <ul class="site-nav__links">
+            <span class="site-nav__indicator" aria-hidden="true"></span>
             <?php foreach ($navItems as $key => $item): ?>
                 <li>
                     <a href="<?= e($item['href']) ?>" class="<?= $active === $key ? 'active' : '' ?>">
@@ -23,3 +24,4 @@ $navItems = [
         </ul>
     </div>
 </header>
+<script src="/assets/js/nav-indicator.js" defer></script>
