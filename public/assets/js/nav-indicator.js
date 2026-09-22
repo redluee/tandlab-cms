@@ -51,7 +51,7 @@
     list.querySelectorAll('a').forEach(function (link) {
         link.addEventListener('click', function () {
             try {
-                sessionStorage.setItem(storageKey, JSON.stringify(positionOf(link)));
+                sessionStorage.setItem(storageKey, JSON.stringify(positionOf(active)));
             } catch (e) {
                 // ignore
             }
