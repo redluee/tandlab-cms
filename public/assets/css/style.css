@@ -325,11 +325,13 @@ main {
 .usp-shape {
     position: relative;
     display: flex;
+    flex: 0 0 auto;
     align-items: center;
     justify-content: center;
-    width: clamp(230px, 24vw, 290px);
+    width: clamp(190px, 24vw, 290px);
     aspect-ratio: 1 / 1;
     margin: 0 auto;
+    overflow: hidden;
     background: linear-gradient(135deg, #78c39c 0%, #4f9d78 100%);
     box-shadow: 0 14px 32px rgba(35, 39, 42, 0.16);
 }
@@ -340,31 +342,35 @@ main {
 
 .usp-shape--diamond {
     border-radius: 0;
-    width: clamp(190px, 20vw, 240px);
+    width: clamp(160px, 20vw, 240px);
     transform: rotate(45deg);
 }
 
 .usp-shape__inner {
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 24px;
+    padding: clamp(14px, 6%, 24px);
     color: var(--color-white);
     z-index: 1;
     max-width: 82%;
+    max-height: 82%;
+    overflow: hidden;
 }
 
 .usp-shape--diamond .usp-shape__inner {
     transform: rotate(-45deg);
-    max-width: 80%;
-    padding: 10px;
+    max-width: 58%;
+    max-height: 90%;
+    padding: clamp(4px, 3%, 8px);
 }
 
 .usp-shape__badge {
     display: inline-block;
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 800;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -376,9 +382,15 @@ main {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
+.usp-shape--diamond .usp-shape__badge {
+    font-size: 0.6rem;
+    padding: 2px 8px;
+    margin-bottom: 6px;
+}
+
 .usp-card .usp-shape__title,
 .usp-shape__title {
-    font-size: 1.2rem;
+    font-size: clamp(0.95rem, 3.2vw, 1.2rem);
     font-weight: 800;
     line-height: 1.25;
     margin: 0 0 8px;
@@ -387,8 +399,13 @@ main {
     text-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
 }
 
+.usp-shape--diamond .usp-shape__title {
+    font-size: clamp(0.78rem, 2.6vw, 0.98rem);
+    margin-bottom: 4px;
+}
+
 .usp-shape__desc {
-    font-size: 0.88rem;
+    font-size: clamp(0.76rem, 2.2vw, 0.88rem);
     line-height: 1.35;
     margin: 0;
     color: #ffffff;
@@ -396,15 +413,20 @@ main {
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
+.usp-shape--diamond .usp-shape__desc {
+    font-size: clamp(0.62rem, 1.8vw, 0.74rem);
+    line-height: 1.25;
+}
+
 @media (max-width: 600px) {
     .usp-grid--shapes {
         gap: 48px;
     }
     .usp-shape {
-        width: 230px;
+        width: 210px;
     }
     .usp-shape--diamond {
-        width: 190px;
+        width: 180px;
     }
 }
 
