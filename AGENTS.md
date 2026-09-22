@@ -10,6 +10,12 @@ Custom PHP CMS voor Tandlab (tandtechnisch laboratorium, kroon- en brugwerk, De 
 - Fixed navigatiebalk bovenaan, gecentreerde content, actief navigatie-item highlighted met de groene kleur.
 - Vanilla CSS met custom properties (`:root`), geen build-step, geen CSS-framework.
 
+## Git
+
+- Negeer de git repository standaard.
+- Maak onder geen enkele voorwaarde een worktree, branch, tag, commit, merge, rebase, stash, push, pull, status of andere git-operatie zonder expliciete toestemming van de gebruiker.
+- Als de gebruiker expliciet om een git-actie vraagt, voer dan alleen die gevraagde actie uit en niets meer.
+
 ## Stack
 
 - PHP 8.4, PDO (`pdo_sqlite` dev, `pdo_mysql` productie) achter één driver-toggle in `config/config.php`.

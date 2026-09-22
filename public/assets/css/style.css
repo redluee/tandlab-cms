@@ -171,12 +171,12 @@ main {
 }
 
 .hero__deco--left {
-    left: 0;
+    left: min(0px, calc(50% - 800px));
     background-position: left center;
 }
 
 .hero__deco--right {
-    right: 0;
+    right: min(0px, calc(50% - 800px));
     background-position: right center;
 }
 
