@@ -6,6 +6,7 @@ require __DIR__ . '/../app/bootstrap.php';
 
 use App\Controllers\AdminController;
 use App\Controllers\AuthController;
+use App\Controllers\EditorController;
 use App\Controllers\PublicController;
 use App\Http\Router;
 use App\Services\Auth;
@@ -15,6 +16,7 @@ $router = new Router();
 $public = new PublicController();
 $auth = new AuthController();
 $admin = new AdminController();
+$editor = new EditorController();
 
 // Public site
 $router->get('/', fn () => $public->home());
@@ -36,50 +38,13 @@ $router->get('/admin', function () use ($requireAuth, $admin) {
     $admin->dashboard();
 });
 
-$router->get('/admin/tand', function () use ($requireAuth, $admin) {
+$router->get('/admin/bewerken/{page}', function (array $params) use ($requireAuth, $editor) {
     $requireAuth();
-    $admin->tandIndex();
+    $editor->show($params);
 });
-$router->get('/admin/tand/nieuw', function () use ($requireAuth, $admin) {
+$router->post('/admin/bewerken/opslaan', function () use ($requireAuth, $editor) {
     $requireAuth();
-    $admin->tandForm([]);
-});
-$router->get('/admin/tand/{id}/bewerken', function (array $params) use ($requireAuth, $admin) {
-    $requireAuth();
-    $admin->tandForm($params);
-});
-$router->post('/admin/tand/opslaan', function () use ($requireAuth, $admin) {
-    $requireAuth();
-    $admin->tandSave();
-});
-$router->post('/admin/tand/{id}/verwijderen', function (array $params) use ($requireAuth, $admin) {
-    $requireAuth();
-    $admin->tandDelete($params);
-});
-
-$router->get('/admin/team', function () use ($requireAuth, $admin) {
-    $requireAuth();
-    $admin->teamIndex();
-});
-$router->get('/admin/team/nieuw', function () use ($requireAuth, $admin) {
-    $requireAuth();
-    $admin->teamForm([]);
-});
-$router->get('/admin/team/{id}/bewerken', function (array $params) use ($requireAuth, $admin) {
-    $requireAuth();
-    $admin->teamForm($params);
-});
-$router->post('/admin/team/opslaan', function () use ($requireAuth, $admin) {
-    $requireAuth();
-    $admin->teamSave();
-});
-$router->post('/admin/team/{id}/verwijderen', function (array $params) use ($requireAuth, $admin) {
-    $requireAuth();
-    $admin->teamDelete($params);
-});
-$router->post('/admin/team/volgorde', function () use ($requireAuth, $admin) {
-    $requireAuth();
-    $admin->teamReorder();
+    $editor->save();
 });
 
 $router->get('/admin/instellingen', function () use ($requireAuth, $admin) {
@@ -94,6 +59,10 @@ $router->post('/admin/instellingen', function () use ($requireAuth, $admin) {
 $router->get('/admin/afbeeldingen', function () use ($requireAuth, $admin) {
     $requireAuth();
     $admin->mediaIndex();
+});
+$router->get('/admin/afbeeldingen.json', function () use ($requireAuth, $admin) {
+    $requireAuth();
+    $admin->mediaList();
 });
 $router->post('/admin/afbeeldingen/upload', function () use ($requireAuth, $admin) {
     $requireAuth();

@@ -25,166 +25,6 @@ class AdminController
         require __DIR__ . '/../views/admin/dashboard.php';
     }
 
-    // --- Tand ---
-
-    public function tandIndex(): void
-    {
-        $active = 'tand';
-        $pageTitle = 'Tand - TANDLAB CMS';
-        $items = Tandwerk::allForAdmin();
-        require __DIR__ . '/../views/admin/tand-index.php';
-    }
-
-    public function tandForm(array $params): void
-    {
-        $active = 'tand';
-        $item = null;
-        if (!empty($params['id'])) {
-            $item = Tandwerk::find((int) $params['id']);
-            if (!$item) {
-                http_response_code(404);
-                echo 'Niet gevonden';
-                return;
-            }
-        }
-        $pageTitle = ($item ? 'Werkstuk bewerken' : 'Nieuw werkstuk') . ' - TANDLAB CMS';
-        require __DIR__ . '/../views/admin/tand-form.php';
-    }
-
-    public function tandSave(): void
-    {
-        $this->assertCsrf();
-
-        $id = (int) ($_POST['id'] ?? 0);
-        $data = [
-            'title' => trim((string) ($_POST['title'] ?? '')),
-            'body' => trim((string) ($_POST['body'] ?? '')),
-            'alt' => trim((string) ($_POST['alt'] ?? '')),
-            'sort_order' => (int) ($_POST['sort_order'] ?? 0),
-            'active' => isset($_POST['active']) ? 1 : 0,
-        ];
-
-        if (!empty($_FILES['image']['name'])) {
-            try {
-                $data['image_path'] = ImageService::storeUpload($_FILES['image'], 'tandwerk', 1200);
-            } catch (RuntimeException $e) {
-                $_SESSION['admin_error'] = $e->getMessage();
-                header('Location: /admin/tand');
-                exit;
-            }
-        }
-
-        if ($id > 0) {
-            Tandwerk::update($id, $data);
-        } else {
-            if (empty($data['image_path'])) {
-                $data['image_path'] = null;
-            }
-            Tandwerk::create($data);
-        }
-
-        header('Location: /admin/tand');
-        exit;
-    }
-
-    public function tandDelete(array $params): void
-    {
-        $this->assertCsrf();
-        Tandwerk::delete((int) $params['id']);
-        header('Location: /admin/tand');
-        exit;
-    }
-
-    // --- Team ---
-
-    public function teamIndex(): void
-    {
-        $active = 'team';
-        $pageTitle = 'Team - TANDLAB CMS';
-        $members = TeamMember::allForAdmin();
-        require __DIR__ . '/../views/admin/team-index.php';
-    }
-
-    public function teamForm(array $params): void
-    {
-        $active = 'team';
-        $member = null;
-        if (!empty($params['id'])) {
-            $member = TeamMember::find((int) $params['id']);
-            if (!$member) {
-                http_response_code(404);
-                echo 'Niet gevonden';
-                return;
-            }
-        }
-        $pageTitle = ($member ? 'Teamlid bewerken' : 'Nieuw teamlid') . ' - TANDLAB CMS';
-        require __DIR__ . '/../views/admin/team-form.php';
-    }
-
-    public function teamSave(): void
-    {
-        $this->assertCsrf();
-
-        $id = (int) ($_POST['id'] ?? 0);
-        $data = [
-            'name' => trim((string) ($_POST['name'] ?? '')),
-            'role' => trim((string) ($_POST['role'] ?? '')),
-            'bio' => trim((string) ($_POST['bio'] ?? '')),
-            'active' => isset($_POST['active']) ? 1 : 0,
-        ];
-
-        if (!empty($_FILES['photo']['name'])) {
-            try {
-                $data['photo_path'] = ImageService::storeUpload($_FILES['photo'], 'team', 800);
-            } catch (RuntimeException $e) {
-                $_SESSION['admin_error'] = $e->getMessage();
-                header('Location: /admin/team');
-                exit;
-            }
-        }
-
-        if ($id > 0) {
-            TeamMember::update($id, $data);
-        } else {
-            if (empty($data['photo_path'])) {
-                $data['photo_path'] = null;
-            }
-            TeamMember::create($data);
-        }
-
-        header('Location: /admin/team');
-        exit;
-    }
-
-    public function teamDelete(array $params): void
-    {
-        $this->assertCsrf();
-        TeamMember::delete((int) $params['id']);
-        header('Location: /admin/team');
-        exit;
-    }
-
-    public function teamReorder(): void
-    {
-        header('Content-Type: application/json');
-
-        if (!Csrf::validate($_POST['csrf_token'] ?? null)) {
-            http_response_code(400);
-            echo json_encode(['ok' => false, 'error' => 'Ongeldig verzoek (CSRF).']);
-            return;
-        }
-
-        $orderedIds = array_map('intval', (array) ($_POST['order'] ?? []));
-        if (empty($orderedIds)) {
-            http_response_code(422);
-            echo json_encode(['ok' => false, 'error' => 'Geen volgorde ontvangen.']);
-            return;
-        }
-
-        TeamMember::reorder($orderedIds);
-        echo json_encode(['ok' => true]);
-    }
-
     // --- Instellingen ---
 
     public function settingsShow(): void
@@ -192,7 +32,6 @@ class AdminController
         $active = 'instellingen';
         $pageTitle = 'Instellingen - TANDLAB CMS';
         $settings = Setting::all();
-        $images = Image::all();
         require __DIR__ . '/../views/admin/settings.php';
     }
 
@@ -200,32 +39,12 @@ class AdminController
     {
         $this->assertCsrf();
 
-        $fields = [
-            'address', 'phone', 'email', 'email_recipients', 'opening_hours',
-            'map_embed_url', 'privacy_url', 'scan_instructions',
-            'hero_title', 'hero_intro', 'usp_1', 'usp_2', 'usp_3',
-        ];
+        $fields = ['email_recipients', 'map_embed_url', 'privacy_url', 'scan_instructions'];
 
         $data = [];
         foreach ($fields as $field) {
             $data[$field] = trim((string) ($_POST[$field] ?? ''));
         }
-
-        // Slides kept/selected via the media library picker (existing uploads).
-        $existingFilenames = json_decode((string) ($_POST['hero_slides'] ?? '[]'), true);
-        if (!is_array($existingFilenames)) {
-            $existingFilenames = [];
-        }
-
-        $knownFilenames = array_column(Image::all(), 'filename');
-        $slides = [];
-        foreach ($existingFilenames as $filename) {
-            if (is_string($filename) && in_array($filename, $knownFilenames, true)) {
-                $slides[] = $filename;
-            }
-        }
-
-        $data['hero_slides'] = json_encode(array_values($slides));
 
         Setting::setMany($data);
 
@@ -250,6 +69,20 @@ class AdminController
         }
 
         require __DIR__ . '/../views/admin/media.php';
+    }
+
+    public function mediaList(): void
+    {
+        header('Content-Type: application/json');
+        $images = array_map(
+            static fn (array $image) => [
+                'filename' => $image['filename'],
+                'display_name' => $image['display_name'],
+                'url' => '/uploads/' . $image['filename'],
+            ],
+            Image::all()
+        );
+        echo json_encode(['ok' => true, 'images' => $images]);
     }
 
     public function mediaUpload(): void

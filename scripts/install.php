@@ -128,13 +128,17 @@ $defaults = [
     'map_embed_url' => 'https://www.google.com/maps?q=Zandweg+196A+3454+HE+De+Meern&output=embed',
     'privacy_url' => '/assets/docs/privacystatement.pdf',
     'scan_instructions' => 'Neem contact met ons op voor de scan-instructies voor tandartsen.',
+    'hero_kicker' => 'Tandlab',
     'hero_title' => 'UW SPECIALIST IN KROON- EN BRUGWERK',
-    'hero_intro' => 'Welkom bij TANDLAB. Sinds 1985 is ons laboratorium gespecialiseerd in kroon- en brugwerk.',
-    'usp_1' => 'Actief sinds 1985',
-    'usp_2' => 'Erkend leerbedrijf',
-    'usp_3' => 'Korte lijntjes',
+    'hero_intro' => 'Sinds 1985 vervaardigen wij hoogwaardig kroon- en brugwerk. Als erkend leerbedrijf combineert ons vaste team jarenlange ervaring met actuele technieken om passende werkstukken voor uw praktijk of gebit te leveren.',
     'hero_slide_1' => $heroSlide1,
     'hero_slide_2' => $heroSlide2,
+    'tand_title' => 'Tand',
+    'team_title' => 'Team',
+    'team_intro' => 'Wij zijn een erkend leerbedrijf. In het laboratorium werkt vakkundig personeel dat allemaal als leerling bij ons is begonnen. In ons hechte team werken we samen aan het beste resultaat voor uw gebit.',
+    'contact_title' => 'Contact',
+    'map_note' => 'De zandweg is eenrichtingsverkeer richting het westen',
+    'hero_interval' => '6',
 ];
 
 foreach ($defaults as $key => $value) {

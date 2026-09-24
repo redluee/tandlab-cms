@@ -1,67 +1,35 @@
 <?php
 /** @var array $settings */
 
-$pageTitle = 'TANDLAB Kroon- en brugwerk';
+$pageTitle = 'Tandtechnisch Laboratorium De Meern | TANDLAB';
+$metaDescription = 'TANDLAB is een tandtechnisch laboratorium in De Meern, gespecialiseerd in kroon- en brugwerk sinds 1985. Vakwerk voor tandartsen en patiënten.';
 $active = 'home';
 
 $heroSlides = json_decode($settings['hero_slides'] ?? '[]', true);
 if (!is_array($heroSlides) || empty($heroSlides)) {
     $heroSlides = array_filter([$settings['hero_slide_1'] ?? '', $settings['hero_slide_2'] ?? '']);
 }
+$heroSlide = array_values($heroSlides)[0] ?? '';
 
 ob_start();
 ?>
-<section class="hero">
-    <?php foreach (array_values($heroSlides) as $index => $slide): ?>
-        <div class="hero__slide<?= $index === 0 ? ' is-active' : '' ?>" style="background-image:url('/uploads/<?= e($slide) ?>')"></div>
-    <?php endforeach; ?>
+<section class="hero" <?= edit('setting:hero_slides', 'slides') ?>>
+    <div class="hero__slide is-active" style="background-image:url('/uploads/<?= e($heroSlide) ?>')"></div>
     <div class="hero__overlay"></div>
-    <div class="hero__deco hero__deco--left" aria-hidden="true"></div>
-    <div class="hero__deco hero__deco--right" aria-hidden="true"></div>
-    <div class="hero__content">
-        <h1 class="hero__title">
-            <?= e($settings['hero_title'] ?? 'UW SPECIALIST IN KROON- EN BRUGWERK') ?>
-        </h1>
-        <p class="hero__intro"><?= e($settings['hero_intro'] ?? 'Welkom bij TANDLAB. Sinds 1985 is ons laboratorium gespecialiseerd in kroon- en brugwerk.') ?></p>
-        <a class="btn" href="#contact">Ik wil contact</a>
+    <div class="hero__shapes" aria-hidden="true">
+        <span class="hero__shape hero__shape--hourglass"></span>
+        <span class="hero__shape-col">
+            <span class="hero__shape hero__shape--diamond"></span>
+            <span class="hero__shape hero__shape--circle"></span>
+        </span>
     </div>
-</section>
-
-<section class="section">
-    <div class="container">
-        <div class="section__header">
-            <h2>Welkom bij TANDLAB</h2>
-            <p>We zijn een erkend leerbedrijf en werken als een hecht team aan het beste resultaat voor uw gebit.</p>
-        </div>
-        <div class="usp-grid usp-grid--shapes">
-            <div class="usp-card usp-card--shape">
-                <div class="usp-shape usp-shape--diamond">
-                    <div class="usp-shape__inner">
-                        <span class="usp-shape__badge">1985</span>
-                        <h3 class="usp-shape__title"><?= e($settings['usp_1'] ?? '40+ jaar ervaring') ?></h3>
-                        <p class="usp-shape__desc">Sinds 1985 specialist in kroon- en brugwerk.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="usp-card usp-card--shape">
-                <div class="usp-shape usp-shape--circle">
-                    <div class="usp-shape__inner">
-                        <span class="usp-shape__badge">Team</span>
-                        <h3 class="usp-shape__title"><?= e($settings['usp_2'] ?? 'Lokale samenwerking') ?></h3>
-                        <p class="usp-shape__desc">Korte lijntjes en persoonlijk overleg met onze opdrachtgevers.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="usp-card usp-card--shape">
-                <div class="usp-shape usp-shape--diamond">
-                    <div class="usp-shape__inner">
-                        <span class="usp-shape__badge">Tech</span>
-                        <h3 class="usp-shape__title"><?= e($settings['usp_3'] ?? 'Moderne scan/3D-techniek') ?></h3>
-                        <p class="usp-shape__desc">CBCT-scan, software en teamviewer voor optimaal resultaat.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="hero__content">
+        <p class="hero__kicker" <?= edit('setting:hero_kicker', 'text') ?>><?= rich($settings['hero_kicker'] ?? 'Tandlab', 'text') ?></p>
+        <h1 class="hero__title" <?= edit('setting:hero_title', 'text') ?>>
+            <?= rich($settings['hero_title'] ?? 'UW SPECIALIST IN KROON- EN BRUGWERK', 'text') ?>
+        </h1>
+        <p class="hero__intro" <?= edit('setting:hero_intro', 'richtext') ?>><?= rich($settings['hero_intro'] ?? 'Sinds 1985 vervaardigen wij hoogwaardig kroon- en brugwerk. Als erkend leerbedrijf combineert ons vaste team jarenlange ervaring met actuele technieken om passende werkstukken voor uw praktijk of gebit te leveren.', 'richtext') ?></p>
+        <a class="btn" href="#contact">Ik wil contact</a>
     </div>
 </section>
 

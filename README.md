@@ -74,4 +74,10 @@ Zie `plan.md` §3 voor de volledige projectstructuur en architectuurbeslissingen
 
 - `php -S localhost:8000 -t public public/router.php` voor lokaal draaien.
 - `php scripts/install.php` herhaaldelijk uitvoeren om idempotentie te controleren.
-- Handmatige checklist: hero-slider op mobiel/desktop, fixed navigatie, login-cyclus, CRUD op Tand/Team, uploaden van afbeeldingen.
+- Handmatige checklist:
+  - Hero-slider op mobiel/desktop, fixed navigatie, login-cyclus.
+  - Publieke pagina's (`/`, `/tand`, `/team`) bevatten geen `data-edit`-attributen en laden geen editor-assets.
+  - Visuele editor (`/admin/bewerken/home|tand|team`): tekstvelden aanklikken en bewerken (bold/italic, links bij `richtext`), afbeelding vervangen/uploaden, alt-tekst (Tand), hero-slides toevoegen/verwijderen/herordenen, nieuw Tand-werkstuk/teamlid toevoegen, item verbergen/tonen, herordenen (sleep-handvat), verwijderen, en "Opslaan" — controleer dat de publieke pagina de wijziging toont.
+  - "Annuleren" en het verlaten van de pagina met niet-opgeslagen wijzigingen tonen een waarschuwing.
+  - Uploaden van afbeeldingen via de mediabibliotheek en via de editor.
+  - Beveiliging: een `POST /admin/bewerken/opslaan` zonder `X-CSRF-Token`-header geeft 403; uitgelogd bezoeken van `/admin/bewerken/*` stuurt door naar `/admin/login`; een onbekende instelling of afbeeldingsbestandsnaam wordt geweigerd; geplakte of geposte `<script>`/`onerror`/`javascript:`-payloads komen gestript terug (zie `rich()`-uitzondering in AGENTS.md).

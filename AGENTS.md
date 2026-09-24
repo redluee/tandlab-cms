@@ -4,6 +4,10 @@
 
 Custom PHP CMS voor Tandlab (tandtechnisch laboratorium, kroon- en brugwerk, De Meern). Eén concept wordt gebouwd: "Concept 1". Publieke site (Home, Tand, Team, gedeelde `#contact`-sectie) + Nederlandstalig admin-CMS.
 
+## Visuele editor
+
+Content van Home, Tand en Team wordt beheerd via een inline visuele editor (`/admin/bewerken/{home,tand,team}`), niet via losse admin-formulieren. `App\Services\EditMode` zet een globale vlag; de publieke views (`app/views/public/**`) worden hergebruikt voor zowel de publieke site als de editor. De `edit()`-helper (`app/bootstrap.php`) voegt `data-edit`/`data-edit-type`-attributen toe zolang `EditMode::on()` waar is, en geeft anders een lege string terug — publieke pagina's blijven zo byte-voor-byte ongewijzigd (geen `data-edit`, geen editor-CSS/JS) wanneer er niet bewerkt wordt. Client-side zit de logica in `public/assets/js/editor.js` (vanilla JS, `contenteditable` + `document.execCommand`, SortableJS voor herordenen) en `public/assets/js/media-picker.js` (gedeelde mediabibliotheek-picker). Wijzigingen worden pas opgeslagen bij een expliciete "Opslaan"-actie, via `POST /admin/bewerken/opslaan` (JSON body, `X-CSRF-Token`-header), afgehandeld door `App\Controllers\EditorController`.
+
 ## Huisstijl
 
 - Kleuren: groen accent `#78c39c` (donker `#4f9d78`), donkergrijs `#23272a`/`#4a4f54` voor tekst en contact/footer-achtergrond, lichtgrijs `#f4f5f6` voor gemute secties.
@@ -41,6 +45,7 @@ Zie `plan.md` §3. Namespaces volgen PSR-achtige mapping: `App\Db` → `app/Db`,
 - Geen comments tenzij de WHY niet-triviaal is.
 - Admin-UI en publieke UI-teksten in het Nederlands.
 - Alle SQL via PDO prepared statements; output altijd via de `e()`-helper (`htmlspecialchars`).
+- Uitzondering: content-velden die rich text mogen bevatten (bijv. `hero_intro`, `address`, Tand-beschrijvingen, team-bio's) worden uitgevoerd via de `rich()`-helper (`app/bootstrap.php`) in plaats van `e()`/`nl2br(e())`. `rich()` geeft platte waarden (geen `<`) terug via `nl2br(e(...))`, en HTML-waarden via `App\Services\HtmlSanitizer::clean()`, dat een whitelist van tags/attributen afdwingt (o.a. geen `<script>`, geen `javascript:`-links). Content wordt zowel bij opslaan als bij tonen gesaniteerd. Gebruik `rich()` nooit voor attributen, URL's of `alt`-teksten — die blijven via `e()` gaan.
 - Portable SQL: `app/Db/schema.sqlite.sql` en `app/Db/schema.mysql.sql` zijn functioneel identiek; `AUTOINCREMENT`/`AUTO_INCREMENT` is het enige structurele verschil.
 - `site_settings` is een key/value-tabel (`setting_key`, niet `key` — gereserveerd woord in sommige SQL-dialecten).
 - Nieuwe afbeeldingen altijd via `ImageService` (validatie → resize → WebP), nooit ruwe uploads direct opslaan.

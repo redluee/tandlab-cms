@@ -43,4 +43,24 @@ function config_get(): array
     return $config;
 }
 
+function edit(string $ref, string $type = 'text'): string
+{
+    if (!\App\Services\EditMode::on()) {
+        return '';
+    }
+    return 'data-edit="' . e($ref) . '" data-edit-type="' . e($type) . '"';
+}
+
+function rich(?string $value, string $type = 'richtext'): string
+{
+    $value = (string) $value;
+    if ($value === '') {
+        return '';
+    }
+    if (!str_contains($value, '<')) {
+        return nl2br(e($value));
+    }
+    return \App\Services\HtmlSanitizer::clean($value, $type);
+}
+
 return $config;

@@ -1,9 +1,10 @@
 <?php
 /** @var string $active */
+$editing = \App\Services\EditMode::on();
 $navItems = [
-    'home' => ['label' => 'Home', 'href' => '/'],
-    'tand' => ['label' => 'Tand', 'href' => '/tand'],
-    'team' => ['label' => 'Team', 'href' => '/team'],
+    'home' => ['label' => 'Home', 'href' => $editing ? '/admin/bewerken/home' : '/'],
+    'tand' => ['label' => 'Tand', 'href' => $editing ? '/admin/bewerken/tand' : '/tand'],
+    'team' => ['label' => 'Team', 'href' => $editing ? '/admin/bewerken/team' : '/team'],
     'contact' => ['label' => 'Contact', 'href' => '#contact'],
 ];
 ?>

@@ -91,10 +91,29 @@ class TeamMember
         $pdo = Database::connect(config_get()['db']);
         $stmt = $pdo->prepare('UPDATE team_members SET sort_order = ? WHERE id = ?');
 
-        $pdo->beginTransaction();
         foreach (array_values($orderedIds) as $position => $id) {
             $stmt->execute([$position, (int) $id]);
         }
-        $pdo->commit();
+    }
+
+    private const WHITELISTED_FIELDS = ['name', 'role', 'bio', 'photo_path', 'active'];
+
+    public static function updateFields(int $id, array $fields): void
+    {
+        $set = [];
+        $params = [];
+        foreach (self::WHITELISTED_FIELDS as $field) {
+            if (array_key_exists($field, $fields)) {
+                $set[] = $field . ' = ?';
+                $params[] = $fields[$field];
+            }
+        }
+        if (empty($set)) {
+            return;
+        }
+        $params[] = $id;
+        $pdo = Database::connect(config_get()['db']);
+        $stmt = $pdo->prepare('UPDATE team_members SET ' . implode(', ', $set) . ' WHERE id = ?');
+        $stmt->execute($params);
     }
 }

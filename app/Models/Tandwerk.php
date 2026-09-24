@@ -78,4 +78,45 @@ class Tandwerk
         $stmt = $pdo->prepare('DELETE FROM tandwerk WHERE id = ?');
         $stmt->execute([$id]);
     }
+
+    private const WHITELISTED_FIELDS = ['title', 'body', 'image_path', 'alt', 'active'];
+
+    public static function updateFields(int $id, array $fields): void
+    {
+        $set = [];
+        $params = [];
+        foreach (self::WHITELISTED_FIELDS as $field) {
+            if (array_key_exists($field, $fields)) {
+                $set[] = $field . ' = ?';
+                $params[] = $fields[$field];
+            }
+        }
+        if (empty($set)) {
+            return;
+        }
+        $params[] = $id;
+        $pdo = Database::connect(config_get()['db']);
+        $stmt = $pdo->prepare('UPDATE tandwerk SET ' . implode(', ', $set) . ' WHERE id = ?');
+        $stmt->execute($params);
+    }
+
+    public static function nextSortOrder(): int
+    {
+        $pdo = Database::connect(config_get()['db']);
+        $stmt = $pdo->query('SELECT COALESCE(MAX(sort_order), -1) + 1 FROM tandwerk');
+        return (int) $stmt->fetchColumn();
+    }
+
+    /**
+     * @param int[] $orderedIds Tandwerk IDs in the desired display order.
+     */
+    public static function reorder(array $orderedIds): void
+    {
+        $pdo = Database::connect(config_get()['db']);
+        $stmt = $pdo->prepare('UPDATE tandwerk SET sort_order = ? WHERE id = ?');
+
+        foreach (array_values($orderedIds) as $position => $id) {
+            $stmt->execute([$position, (int) $id]);
+        }
+    }
 }

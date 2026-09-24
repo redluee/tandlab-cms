@@ -4,9 +4,7 @@
 /** @var string $active */
 
 $navItems = [
-    'dashboard' => ['label' => 'Home', 'href' => '/admin'],
-    'tand' => ['label' => 'Tand', 'href' => '/admin/tand'],
-    'team' => ['label' => 'Team', 'href' => '/admin/team'],
+    'dashboard' => ['label' => 'Pagina bewerken', 'href' => '/admin/bewerken/home'],
     'instellingen' => ['label' => 'Instellingen', 'href' => '/admin/instellingen'],
     'afbeeldingen' => ['label' => 'Afbeeldingen', 'href' => '/admin/afbeeldingen'],
 ];
