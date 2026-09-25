@@ -77,13 +77,30 @@ a {
     height: 100%;
     background: var(--color-green);
     border-radius: var(--radius);
-    transition: transform 0.3s ease, width 0.3s ease;
+    transition: left 0.3s ease, width 0.3s ease;
     z-index: 0;
     opacity: 0;
 }
 
 .site-nav__indicator.is-ready {
     opacity: 1;
+}
+
+/* CSS Anchor Positioning: ties the indicator to whichever link carries
+   .active, so the browser computes its left/width instead of JS measuring
+   offsetLeft/offsetWidth. nav-indicator.js still handles the slide-in
+   animation on page load and falls back to manual positioning when
+   anchor-name is unsupported. */
+@supports (anchor-name: --nav-active) {
+    .site-nav__links a.active {
+        anchor-name: --nav-active;
+    }
+
+    .site-nav__indicator {
+        position-anchor: --nav-active;
+        left: anchor(--nav-active left);
+        width: anchor-size(--nav-active width);
+    }
 }
 
 .site-nav__links a {
