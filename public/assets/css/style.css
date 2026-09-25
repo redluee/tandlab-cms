@@ -113,9 +113,16 @@ a {
 /* CSS Anchor Positioning: ties the indicator to whichever link carries
    .active, so the browser computes its left/width instead of JS measuring
    offsetLeft/offsetWidth. nav-indicator.js still handles the slide-in
-   animation on page load and falls back to manual positioning when
-   anchor-name is unsupported. */
-@supports (anchor-name: --nav-active) {
+   animation on page load and falls back to manual positioning when anchor
+   positioning is unsupported. The @supports condition tests the exact
+   anchor()/anchor-size() syntax used below (matched by the CSS.supports()
+   check in nav-indicator.js) rather than just the anchor-name property,
+   since a browser can recognize anchor-name without yet supporting the
+   anchor()/anchor-size() functions - if only the property were tested,
+   CSS would drop the invalid left/width declarations while JS still
+   released its own inline positioning, leaving the indicator with no
+   position at all. */
+@supports (position-anchor: --nav-active) and (left: anchor(--nav-active left)) and (width: anchor-size(--nav-active width)) {
     .site-nav__links a.active {
         anchor-name: --nav-active;
     }

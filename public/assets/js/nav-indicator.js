@@ -10,7 +10,15 @@
     // this script then only supplies the slide-in animation on page load
     // and lets go of its inline overrides so the anchor-computed position
     // takes over. Unsupported browsers keep the old JS-measured fallback.
-    var anchorSupported = !!(window.CSS && CSS.supports && CSS.supports('anchor-name', '--nav-active'));
+    // Mirrors the CSS @supports condition exactly (anchor-name property AND
+    // the anchor()/anchor-size() functions), so the two never disagree.
+    var anchorSupported = !!(
+        window.CSS &&
+        CSS.supports &&
+        CSS.supports('position-anchor', '--nav-active') &&
+        CSS.supports('left', 'anchor(--nav-active left)') &&
+        CSS.supports('width', 'anchor-size(--nav-active width)')
+    );
 
     function positionOf(link) {
         return { left: link.offsetLeft, width: link.offsetWidth };
