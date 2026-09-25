@@ -9,11 +9,14 @@ $editing = \App\Services\EditMode::on();
 
 ob_start();
 ?>
+<section class="page-hero">
+    <div class="container">
+        <h1 <?= edit('setting:tand_title', 'text') ?>><?= rich($settings['tand_title'] ?? 'Tand', 'text') ?></h1>
+        <p <?= edit('setting:tand_intro', 'richtext') ?>><?= rich($settings['tand_intro'] ?? 'Een overzicht van ons kroon- en brugwerk: vakkundig tandtechnisch werk, gemaakt met oog voor detail en precisie.', 'richtext') ?></p>
+    </div>
+</section>
 <section class="section">
     <div class="container">
-        <div class="section__header">
-            <h1 <?= edit('setting:tand_title', 'text') ?>><?= rich($settings['tand_title'] ?? 'Tand', 'text') ?></h1>
-        </div>
         <div class="tand-grid" id="tand-grid"<?= $editing ? ' data-edit-list="tandwerk"' : '' ?>>
             <?php foreach ($items as $index => $item): ?>
                 <?php

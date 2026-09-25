@@ -9,12 +9,14 @@ $editing = \App\Services\EditMode::on();
 
 ob_start();
 ?>
-<section class="section">
+<section class="page-hero">
     <div class="container">
-        <div class="section__header">
-            <h1 <?= edit('setting:team_title', 'text') ?>><?= rich($settings['team_title'] ?? 'Team', 'text') ?></h1>
-            <p <?= edit('setting:team_intro', 'richtext') ?>><?= rich($settings['team_intro'] ?? 'Wij zijn een erkend leerbedrijf. In het laboratorium werkt vakkundig personeel dat allemaal als leerling bij ons is begonnen. In ons hechte team werken we samen aan het beste resultaat voor uw gebit.', 'richtext') ?></p>
-        </div>
+        <h1 <?= edit('setting:team_title', 'text') ?>><?= rich($settings['team_title'] ?? 'Ons team', 'text') ?></h1>
+        <p <?= edit('setting:team_intro', 'richtext') ?>><?= rich($settings['team_intro'] ?? 'Wij zijn een erkend leerbedrijf. In het laboratorium werkt vakkundig personeel dat allemaal als leerling bij ons is begonnen. In ons hechte team werken we samen aan het beste resultaat voor uw gebit.', 'richtext') ?></p>
+    </div>
+</section>
+<section class="section team-section">
+    <div class="container">
         <div class="team-grid" id="team-grid"<?= $editing ? ' data-edit-list="team"' : '' ?>>
             <?php foreach ($members as $member): ?>
                 <?php $ref = 'team:' . (int) $member['id']; ?>

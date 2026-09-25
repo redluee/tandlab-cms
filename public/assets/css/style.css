@@ -421,43 +421,100 @@ main {
     margin-top: 0;
 }
 
-/* Team grid */
+/* Page hero (Tand, Team) */
+.page-hero {
+    position: relative;
+    background: var(--color-navy);
+    color: var(--color-white);
+    padding: 80px 0;
+    overflow: hidden;
+}
+
+.page-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-color: #153a4d;
+    -webkit-mask-image: url('/assets/img/shapes-pattern.webp');
+    mask-image: url('/assets/img/shapes-pattern.webp');
+    -webkit-mask-size: 588px 588px;
+    mask-size: 588px 588px;
+    -webkit-mask-repeat: repeat;
+    mask-repeat: repeat;
+    pointer-events: none;
+}
+
+.page-hero .container {
+    position: relative;
+    z-index: 1;
+}
+
+.page-hero h1 {
+    text-align: left;
+    margin: 0 0 14px;
+    font-size: 2rem;
+    color: var(--color-green);
+}
+
+.page-hero p {
+    text-align: left;
+    margin: 0;
+    max-width: 640px;
+    color: rgba(255, 255, 255, 0.82);
+}
+
+.team-section {
+    background: var(--color-gray-100);
+}
+
 .team-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 28px;
-    margin-top: 40px;
 }
 
 .team-card {
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: left;
     background: var(--color-white);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    border-radius: var(--radius-squircle);
     overflow: hidden;
-    padding-bottom: 20px;
+    padding: 20px;
 }
 
 .team-card img {
+    order: -1;
     width: 100%;
-    aspect-ratio: 3 / 4;
+    aspect-ratio: 1 / 1;
     object-fit: cover;
+    border-radius: calc(var(--radius-squircle) - 6px);
+}
+
+.team-grid > .team-card:nth-child(even) img {
+    order: 1;
 }
 
 .team-card h3 {
-    margin: 16px 0 4px;
+    margin: 0;
+    font-size: 1.2rem;
 }
 
 .team-card .role {
     color: var(--color-green-dark);
-    font-weight: 600;
-    margin: 0 0 10px;
+    font-weight: 700;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin: 0;
 }
 
 .team-card .bio {
     font-size: 0.92rem;
     color: var(--color-gray-700);
-    padding: 0 16px;
+    margin: 0;
 }
 
 /* Contact */
