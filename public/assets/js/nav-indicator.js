@@ -5,6 +5,13 @@
         return;
     }
 
+    // Browsers that support CSS Anchor Positioning size/place the indicator
+    // declaratively (see .site-nav__indicator + anchor-name in style.css);
+    // this script then only supplies the slide-in animation on page load
+    // and lets go of its inline overrides so the anchor-computed position
+    // takes over. Unsupported browsers keep the old JS-measured fallback.
+    var anchorSupported = !!(window.CSS && CSS.supports && CSS.supports('anchor-name', '--nav-active'));
+
     function positionOf(link) {
         return { left: link.offsetLeft, width: link.offsetWidth };
     }
@@ -12,7 +19,13 @@
     function place(pos, animate) {
         indicator.style.transition = animate ? '' : 'none';
         indicator.style.width = pos.width + 'px';
-        indicator.style.transform = 'translateX(' + pos.left + 'px)';
+        indicator.style.left = pos.left + 'px';
+    }
+
+    function releaseToAnchor(animate) {
+        indicator.style.transition = animate ? '' : 'none';
+        indicator.style.width = '';
+        indicator.style.left = '';
     }
 
     var active = list.querySelector('a.active');
@@ -34,9 +47,16 @@
         indicator.classList.add('is-ready');
         requestAnimationFrame(function () {
             requestAnimationFrame(function () {
-                place(current, true);
+                if (anchorSupported) {
+                    releaseToAnchor(true);
+                } else {
+                    place(current, true);
+                }
             });
         });
+    } else if (anchorSupported) {
+        releaseToAnchor(false);
+        indicator.classList.add('is-ready');
     } else {
         place(current, false);
         indicator.classList.add('is-ready');
@@ -58,11 +78,13 @@
         });
     });
 
-    var resizeTimer = null;
-    window.addEventListener('resize', function () {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(function () {
-            place(positionOf(active), false);
-        }, 100);
-    });
+    if (!anchorSupported) {
+        var resizeTimer = null;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function () {
+                place(positionOf(active), false);
+            }, 100);
+        });
+    }
 })();
