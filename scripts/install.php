@@ -134,6 +134,7 @@ $defaults = [
     'hero_slide_1' => $heroSlide1,
     'hero_slide_2' => $heroSlide2,
     'tand_title' => 'Tand',
+    'tand_intro' => 'Een overzicht van ons kroon- en brugwerk: vakkundig tandtechnisch werk, gemaakt met oog voor detail en precisie.',
     'team_title' => 'Ons team',
     'team_intro' => 'Wij zijn een erkend leerbedrijf. In het laboratorium werkt vakkundig personeel dat allemaal als leerling bij ons is begonnen. In ons hechte team werken we samen aan het beste resultaat voor uw gebit.',
     'contact_title' => 'Contact',

@@ -21,6 +21,7 @@ class EditorController
         'hero_title' => 'text',
         'hero_intro' => 'richtext',
         'tand_title' => 'text',
+        'tand_intro' => 'richtext',
         'team_title' => 'text',
         'team_intro' => 'richtext',
         'contact_title' => 'text',
