@@ -55,10 +55,23 @@
         indicator.classList.add('is-ready');
         requestAnimationFrame(function () {
             requestAnimationFrame(function () {
+                // Always drive the slide-in with the JS-measured left/width
+                // transition instead of releasing straight to anchor()
+                // values here: some browsers (e.g. current Firefox) support
+                // anchor-name/anchor() but don't animate a transition whose
+                // end value comes from anchor(), so the indicator jumps
+                // instantly instead of sliding. Anchor positioning is still
+                // handed control right after, purely for later-resize
+                // correctness, once the visible slide has finished.
+                place(current, true);
                 if (anchorSupported) {
-                    releaseToAnchor(true);
-                } else {
-                    place(current, true);
+                    indicator.addEventListener('transitionend', function handler(e) {
+                        if (e.target !== indicator) {
+                            return;
+                        }
+                        indicator.removeEventListener('transitionend', handler);
+                        releaseToAnchor(false);
+                    });
                 }
             });
         });
