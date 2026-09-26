@@ -471,6 +471,10 @@ main {
     color: rgba(255, 255, 255, 0.82);
 }
 
+.page-hero--tand {
+    padding: 93px 0;
+}
+
 .team-section {
     background: var(--color-gray-100);
 }

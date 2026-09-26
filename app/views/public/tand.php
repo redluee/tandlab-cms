@@ -9,7 +9,7 @@ $editing = \App\Services\EditMode::on();
 
 ob_start();
 ?>
-<section class="page-hero">
+<section class="page-hero page-hero--tand">
     <div class="container">
         <h1 <?= edit('setting:tand_title', 'text') ?>><?= rich($settings['tand_title'] ?? 'Tand', 'text') ?></h1>
         <p <?= edit('setting:tand_intro', 'richtext') ?>><?= rich($settings['tand_intro'] ?? 'Een overzicht van ons kroon- en brugwerk: vakkundig tandtechnisch werk, gemaakt met oog voor detail en precisie.', 'richtext') ?></p>
