@@ -499,6 +499,8 @@ main {
     mask-size: 588px 588px;
     -webkit-mask-repeat: repeat;
     mask-repeat: repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
     pointer-events: none;
 }
 
