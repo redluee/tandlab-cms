@@ -397,35 +397,85 @@ main {
     text-decoration: underline;
 }
 
-/* Tand grid */
+/* Tand grid: alternating full-width bars, one per onderwerp */
 .tand-grid {
+    display: flex;
+    flex-direction: column;
+}
+
+.tand-bar {
+    position: relative;
+    overflow: hidden;
+    padding: 64px 0;
+}
+
+.tand-bar:nth-child(odd) {
+    background: var(--color-gray-100);
+}
+
+.tand-bar:nth-child(even) {
+    background: var(--color-navy);
+    color: var(--color-white);
+}
+
+.tand-bar__shape {
+    position: absolute;
+    top: 50%;
+    right: -70px;
+    width: 260px;
+    height: 260px;
+    transform: translateY(-50%);
+    background: var(--color-green);
+    opacity: 0.14;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.tand-bar:nth-child(even) .tand-bar__shape {
+    opacity: 0.16;
+}
+
+.tand-bar:nth-child(3n+1) .tand-bar__shape {
+    border-radius: 50%;
+}
+
+.tand-bar:nth-child(3n+2) .tand-bar__shape {
+    transform: translateY(-50%) rotate(45deg);
+}
+
+.tand-bar:nth-child(3n) .tand-bar__shape {
+    clip-path: polygon(0% 0%, 100% 0%, 52% 50%, 100% 100%, 0% 100%, 48% 50%);
+}
+
+.tand-bar__row {
+    position: relative;
+    z-index: 1;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 0;
-    border-radius: var(--radius);
-    overflow: hidden;
+    gap: 48px;
+    align-items: center;
 }
 
 .tand-grid__cell {
-    min-height: 280px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .tand-grid__cell--image {
+    min-height: 280px;
+    border-radius: var(--radius);
     background-size: cover;
     background-position: center;
-}
-
-.tand-grid__cell--text {
-    background: var(--color-gray-100);
-    padding: 40px;
 }
 
 .tand-grid__cell--text h3 {
     color: var(--color-green-dark);
     margin-top: 0;
+}
+
+.tand-bar:nth-child(even) .tand-grid__cell--text h3 {
+    color: var(--color-green);
 }
 
 /* Page hero (Tand, Team) */
@@ -706,8 +756,14 @@ main {
         display: none;
     }
 
-    .tand-grid {
+    .tand-bar__row {
         grid-template-columns: 1fr;
+    }
+
+    .tand-bar__shape {
+        width: 160px;
+        height: 160px;
+        right: -50px;
     }
 
     .contact-grid,

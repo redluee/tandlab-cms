@@ -179,10 +179,11 @@ body.is-editing .site-nav {
     display: contents;
 }
 
-/* team.php puts data-edit-item on .team-card itself (the styled card, not a
-   neutral wrapper like .tand-grid__item), so display:contents above would
-   strip its background/padding/text-align box and scatter its children. */
-.team-card[data-edit-item] {
+/* team.php and tand.php put data-edit-item on the styled card/bar itself
+   (not a neutral wrapper), so display:contents above would strip its
+   background/padding/shape box and scatter its children. */
+.team-card[data-edit-item],
+.tand-bar[data-edit-item] {
     display: block;
 }
 
@@ -228,7 +229,7 @@ body.is-editing .team-card {
 
 .editor-add-item {
     display: block;
-    margin: 20px auto 0;
+    margin: 20px auto 20px;
     padding: 12px 24px;
     border: 2px dashed var(--color-green-dark, #4f9d78);
     border-radius: 6px;
