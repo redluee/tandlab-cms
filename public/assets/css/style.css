@@ -583,7 +583,7 @@ main {
 /* Contact */
 .contact-section {
     position: relative;
-    background-color: var(--color-gray-500);
+    background-color: var(--color-navy);
     color: var(--color-gray-900);
     scroll-margin-top: 72px;
     overflow: hidden;
@@ -594,10 +594,15 @@ main {
     position: absolute;
     inset: 0;
     z-index: 0;
-    background-image: url('/assets/img/shapes-pattern.webp');
-    background-size: 588px 588px;
-    background-repeat: repeat;
-    opacity: 0.08;
+    background-color: #153a4d;
+    -webkit-mask-image: url('/assets/img/shapes-pattern.webp');
+    mask-image: url('/assets/img/shapes-pattern.webp');
+    -webkit-mask-size: 588px 588px;
+    mask-size: 588px 588px;
+    -webkit-mask-repeat: repeat;
+    mask-repeat: repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
     pointer-events: none;
 }
 
