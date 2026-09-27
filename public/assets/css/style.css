@@ -747,7 +747,7 @@ main {
 
 /* Footer */
 .site-footer {
-    background: var(--color-navy);
+    background: #808080;
     color: var(--color-white);
     padding: 24px 0 32px;
     text-align: center;
