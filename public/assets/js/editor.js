@@ -144,10 +144,22 @@
 
         if (type === 'richtext') {
             toolbarEl.appendChild(makeToolbarButton(LINK_ICON_SVG, function () {
-                var url = prompt('Link-URL (http(s)://, mailto: of tel:)', 'https://');
-                if (url) {
+                var sel = window.getSelection();
+                var range = sel.rangeCount ? sel.getRangeAt(0).cloneRange() : null;
+                TandlabDialog.prompt({
+                    title: 'Link invoegen',
+                    message: 'Link-URL (http(s)://, mailto: of tel:)',
+                    value: 'https://',
+                    okLabel: 'Invoegen'
+                }).then(function (url) {
+                    if (!url || !range) {
+                        return;
+                    }
+                    el.focus();
+                    sel.removeAllRanges();
+                    sel.addRange(range);
                     document.execCommand('createLink', false, url);
-                }
+                });
             }, 'Link invoegen'));
             toolbarEl.appendChild(makeToolbarButton('&#8226;', function () { document.execCommand('insertUnorderedList'); }, 'Opsomming'));
             toolbarEl.appendChild(makeToolbarButton('1.', function () { document.execCommand('insertOrderedList'); }, 'Genummerde lijst'));
@@ -322,8 +334,10 @@
             altBtn.addEventListener('click', function () {
                 closeImageMenu();
                 var current = el.getAttribute('aria-label') || el.getAttribute('alt') || '';
-                var value = prompt('Alt-tekst', current);
-                if (value !== null) {
+                TandlabDialog.prompt({ title: 'Alt-tekst', value: current }).then(function (value) {
+                    if (value === null) {
+                        return;
+                    }
                     if (el.hasAttribute('aria-label')) {
                         el.setAttribute('aria-label', value);
                     }
@@ -331,7 +345,7 @@
                         el.setAttribute('alt', value);
                     }
                     applyFieldChange(altRef, value);
-                }
+                });
             });
             panel.appendChild(altBtn);
         }
@@ -520,11 +534,18 @@
         deleteBtn.innerHTML = '&times;';
         deleteBtn.addEventListener('click', function (event) {
             event.stopPropagation();
-            if (!confirm('Item verwijderen?')) {
-                return;
-            }
-            markDelete(kind, item.dataset.id);
-            item.remove();
+            TandlabDialog.confirm({
+                title: 'Item verwijderen',
+                message: 'Weet je zeker dat je dit item wilt verwijderen? De wijziging wordt pas definitief na opslaan.',
+                okLabel: 'Verwijderen',
+                danger: true
+            }).then(function (ok) {
+                if (!ok) {
+                    return;
+                }
+                markDelete(kind, item.dataset.id);
+                item.remove();
+            });
         });
         controls.appendChild(deleteBtn);
 
@@ -644,10 +665,22 @@
     }
 
     function cancelChanges() {
-        if (!hasChanges() || confirm('Wijzigingen annuleren en de pagina herladen?')) {
-            window.removeEventListener('beforeunload', beforeUnloadHandler);
+        if (!hasChanges()) {
             window.location.reload();
+            return;
         }
+        TandlabDialog.confirm({
+            title: 'Wijzigingen annuleren',
+            message: 'Alle niet-opgeslagen wijzigingen gaan verloren en de pagina wordt herladen.',
+            okLabel: 'Annuleren en herladen',
+            cancelLabel: 'Terug naar bewerken',
+            danger: true
+        }).then(function (ok) {
+            if (ok) {
+                window.removeEventListener('beforeunload', beforeUnloadHandler);
+                window.location.reload();
+            }
+        });
     }
 
     function beforeUnloadHandler(event) {

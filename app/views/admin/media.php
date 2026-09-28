@@ -179,14 +179,25 @@ unset($_SESSION['admin_error']);
 
 <script>
     function confirmDelete(event, usedByTitles) {
-        if (usedByTitles && usedByTitles.length > 0) {
-            const list = usedByTitles.map(t => '- ' + t).join('\n');
-            return confirm(
-                'Deze afbeelding wordt gebruikt op de volgende pagina(\'s):\n' + list +
-                '\n\nAls je verwijdert, verdwijnt de afbeelding ook daar. Weet je het zeker?'
-            );
+        const form = event.target;
+        if (form.dataset.confirmed) {
+            return true;
         }
-        return confirm('Verwijderen?');
+        const used = usedByTitles && usedByTitles.length > 0;
+        TandlabDialog.confirm({
+            title: 'Afbeelding verwijderen',
+            message: used ? 'Deze afbeelding wordt gebruikt op de volgende pagina\'s:' : 'Weet je zeker dat je deze afbeelding wilt verwijderen?',
+            list: used ? usedByTitles : null,
+            after: used ? 'Als je verwijdert, verdwijnt de afbeelding ook daar. Weet je het zeker?' : null,
+            okLabel: 'Verwijderen',
+            danger: true
+        }).then(function (ok) {
+            if (ok) {
+                form.dataset.confirmed = '1';
+                form.requestSubmit();
+            }
+        });
+        return false;
     }
 
     function openEditModal(image) {

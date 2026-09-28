@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inloggen - TANDLAB CMS</title>
     <link rel="stylesheet" href="/assets/css/admin.css">
+    <link rel="stylesheet" href="/assets/css/dialog.css">
 </head>
 <body>
 <div class="login-wrap">
@@ -30,5 +31,6 @@
         </form>
     </div>
 </div>
+<script src="/assets/js/dialog.js" defer></script>
 </body>
 </html>

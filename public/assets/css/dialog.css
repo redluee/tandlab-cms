@@ -1,0 +1,124 @@
+.tl-dialog {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(35, 39, 42, 0.55);
+    font-family: "Segoe UI", system-ui, sans-serif;
+    animation: tl-dialog-fade 0.15s ease-out;
+}
+
+.tl-dialog__box {
+    width: 100%;
+    max-width: 440px;
+    padding: 24px;
+    border-top: 4px solid #78c39c;
+    border-radius: 6px;
+    background: #fff;
+    color: #23272a;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+    animation: tl-dialog-pop 0.15s ease-out;
+}
+
+.tl-dialog__box--danger {
+    border-top-color: #e15353;
+}
+
+.tl-dialog__title {
+    margin: 0 0 10px;
+    font-size: 1.15rem;
+}
+
+.tl-dialog__message {
+    margin: 0 0 12px;
+    color: #4a4f54;
+    line-height: 1.5;
+}
+
+.tl-dialog__list {
+    margin: 0 0 12px;
+    padding-left: 20px;
+    color: #4a4f54;
+}
+
+.tl-dialog__input {
+    width: 100%;
+    margin: 0 0 12px;
+    padding: 10px 12px;
+    border: 1px solid #c9cdd1;
+    border-radius: 6px;
+    font: inherit;
+}
+
+.tl-dialog__input:focus {
+    outline: 2px solid #78c39c;
+    outline-offset: 1px;
+}
+
+.tl-dialog__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.tl-dialog__btn {
+    padding: 9px 18px;
+    border: 0;
+    border-radius: 6px;
+    background: #4f9d78;
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.tl-dialog__btn:hover {
+    background: #438a68;
+}
+
+.tl-dialog__btn--secondary {
+    background: #e3e5e7;
+    color: #23272a;
+}
+
+.tl-dialog__btn--secondary:hover {
+    background: #d3d6d9;
+}
+
+.tl-dialog__btn--danger {
+    background: #e15353;
+}
+
+.tl-dialog__btn--danger:hover {
+    background: #bd3a3a;
+}
+
+.tl-dialog__btn:focus-visible {
+    outline: 2px solid #23272a;
+    outline-offset: 2px;
+}
+
+body.tl-dialog-open {
+    overflow: hidden;
+}
+
+@keyframes tl-dialog-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes tl-dialog-pop {
+    from { transform: translateY(8px) scale(0.98); }
+    to { transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tl-dialog,
+    .tl-dialog__box {
+        animation: none;
+    }
+}

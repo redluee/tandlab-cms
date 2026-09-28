@@ -48,6 +48,7 @@ $ogImage = $siteUrl . '/uploads/' . ($ogImageFile !== '' ? $ogImageFile : 'logo.
     <meta name="robots" content="noindex, nofollow">
     <meta name="csrf-token" content="<?= e(\App\Services\Csrf::token()) ?>">
     <link rel="stylesheet" href="/assets/css/editor.css">
+    <link rel="stylesheet" href="/assets/css/dialog.css">
     <?php else: ?>
     <script type="application/ld+json"><?= json_encode([
         '@context' => 'https://schema.org',
@@ -93,6 +94,7 @@ $ogImage = $siteUrl . '/uploads/' . ($ogImageFile !== '' ? $ogImageFile : 'logo.
 <script src="/assets/js/scroll-reveal.js" defer></script>
 <?php if ($editing): ?>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js" integrity="sha256-ymhDBwPE9ZYOkHNYZ8bpTSm1o943EH2BAOWjAQB+nm4=" crossorigin="anonymous"></script>
+<script src="/assets/js/dialog.js" defer></script>
 <script src="/assets/js/media-picker.js" defer></script>
 <script src="/assets/js/editor.js" defer></script>
 <?php endif; ?>

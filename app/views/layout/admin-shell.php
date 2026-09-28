@@ -17,6 +17,7 @@ $navItems = [
     <title><?= e($pageTitle ?? 'TANDLAB CMS') ?></title>
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <link rel="stylesheet" href="/assets/css/admin.css">
+    <link rel="stylesheet" href="/assets/css/dialog.css">
 </head>
 <body>
 <div class="admin-shell">
@@ -35,5 +36,6 @@ $navItems = [
         <?= $content ?>
     </main>
 </div>
+<script src="/assets/js/dialog.js" defer></script>
 </body>
 </html>
