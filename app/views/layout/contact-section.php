@@ -23,7 +23,13 @@ $mapUrl = $settings['map_embed_url'] ?? 'https://www.google.com/maps?q=Zandweg+1
                 </dl>
             </div>
             <div class="contact-tile contact-map">
-                <iframe src="<?= e($mapUrl) ?>" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Locatie Tandlab"></iframe>
+                <div class="map-embed">
+                    <div class="map-skeleton" aria-hidden="true">
+                        <span class="map-skeleton__card"></span>
+                        <span class="map-skeleton__circle"></span>
+                    </div>
+                    <iframe src="<?= e($mapUrl) ?>" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Locatie Tandlab" onload="this.classList.add('is-loaded')"></iframe>
+                </div>
                 <p class="map-note" <?= edit('setting:map_note', 'text') ?>><?= rich($settings['map_note'] ?? 'De zandweg is eenrichtingsverkeer richting het westen', 'text') ?></p>
             </div>
         </div>

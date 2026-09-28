@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<ruleset name="Tandlab CMS">
+    <description>Codestijl voor Tandlab CMS: PSR-12, gecontroleerd voor commit.</description>
+
+    <arg name="basepath" value="."/>
+    <arg name="colors"/>
+    <arg name="extensions" value="php"/>
+    <arg value="p"/>
+
+    <file>app</file>
+    <file>tests</file>
+    <file>tools</file>
+    <file>scripts</file>
+    <file>public/router.php</file>
+
+    <!-- Views mixen HTML en PHP door elkaar; PSR-12 is daar niet op gebouwd. -->
+    <exclude-pattern>app/views/*</exclude-pattern>
+
+    <rule ref="PSR12">
+        <!-- bootstrap.php en scripts/install.php declareren bewust functies
+             én voeren initialisatielogica uit (bootstrap-patroon, zie AGENTS.md). -->
+        <exclude name="PSR1.Files.SideEffects"/>
+    </rule>
+
+    <!-- SQL-strings en HTML-attribuutlijsten zijn hier vaak langer dan 120
+         tekens; dat is leesbaarder dan geforceerd afbreken. -->
+    <rule ref="Generic.Files.LineLength">
+        <exclude-pattern>*</exclude-pattern>
+    </rule>
+</ruleset>

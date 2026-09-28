@@ -11,7 +11,7 @@ $navItems = [
 <header class="site-nav">
     <div class="container">
         <a class="site-nav__logo" href="/">
-            <img src="/uploads/logo.webp" alt="Tandlab logo">
+            <img src="/uploads/logo.webp" alt="Tandlab logo" width="215" height="100" fetchpriority="high">
         </a>
         <ul class="site-nav__links">
             <span class="site-nav__indicator" aria-hidden="true"></span>

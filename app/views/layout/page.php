@@ -16,7 +16,7 @@ $heroSlidesForOg = json_decode($settings['hero_slides'] ?? '[]', true);
 $ogImageFile = is_array($heroSlidesForOg) && !empty($heroSlidesForOg)
     ? array_values($heroSlidesForOg)[0]
     : ($settings['hero_slide_1'] ?? '');
-$ogImage = $siteUrl . '/uploads/' . $ogImageFile;
+$ogImage = $siteUrl . '/uploads/' . ($ogImageFile !== '' ? $ogImageFile : 'logo.webp');
 ?>
 <!DOCTYPE html>
 <html lang="nl">
@@ -36,10 +36,11 @@ $ogImage = $siteUrl . '/uploads/' . $ogImageFile;
     <meta property="og:description" content="<?= e($metaDescription) ?>">
     <?php endif; ?>
     <meta property="og:url" content="<?= e($canonicalUrl) ?>">
-    <?php if (!empty($ogImageFile)): ?>
     <meta property="og:image" content="<?= e($ogImage) ?>">
-    <?php endif; ?>
     <meta name="twitter:card" content="summary_large_image">
+    <?php endif; ?>
+    <?php if (($active ?? '') === 'home' && !$editing && $ogImageFile !== ''): ?>
+    <link rel="preload" as="image" href="/uploads/<?= e($ogImageFile) ?>" fetchpriority="high">
     <?php endif; ?>
     <link rel="icon" type="image/png" href="/assets/img/favicon.png">
     <link rel="stylesheet" href="/assets/css/style.css">
@@ -89,6 +90,7 @@ $ogImage = $siteUrl . '/uploads/' . $ogImageFile;
 </main>
 <?php require __DIR__ . '/footer.php'; ?>
 <script src="/assets/js/hero-slider.js" defer></script>
+<script src="/assets/js/scroll-reveal.js" defer></script>
 <?php if ($editing): ?>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js" integrity="sha256-ymhDBwPE9ZYOkHNYZ8bpTSm1o943EH2BAOWjAQB+nm4=" crossorigin="anonymous"></script>
 <script src="/assets/js/media-picker.js" defer></script>

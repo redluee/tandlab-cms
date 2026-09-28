@@ -155,7 +155,7 @@ class EditorController
                     }
                     $filenames[] = $filename;
                 }
-                $data[$key] = json_encode(array_values($filenames));
+                $data[$key] = json_encode($filenames);
                 continue;
             }
 

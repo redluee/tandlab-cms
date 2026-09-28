@@ -14,17 +14,12 @@ Content van Home, Tand en Team wordt beheerd via een inline visuele editor (`/ad
 - Fixed navigatiebalk bovenaan, gecentreerde content, actief navigatie-item highlighted met de groene kleur.
 - Vanilla CSS met custom properties (`:root`), geen build-step, geen CSS-framework.
 
-## Git
-
-- Negeer de git repository standaard.
-- Maak onder geen enkele voorwaarde een worktree, branch, tag, commit, merge, rebase, stash, push, pull, status of andere git-operatie zonder expliciete toestemming van de gebruiker.
-- Als de gebruiker expliciet om een git-actie vraagt, voer dan alleen die gevraagde actie uit en niets meer.
-
 ## Stack
 
 - PHP 8.4, PDO (`pdo_sqlite` dev, `pdo_mysql` productie) achter één driver-toggle in `config/config.php`.
 - GD voor image resize + WebP-conversie (`app/Services/ImageService.php`).
-- Geen Composer, geen front-end build. Eigen front controller + Router (`app/Http/Router.php`).
+- Geen front-end build. Eigen front controller + Router (`app/Http/Router.php`).
+- Composer wordt uitsluitend als dev-tooling gebruikt (PHPUnit, PHP_CodeSniffer, PHPStan) — geen runtime-dependencies, geen build-step voor productie.
 - Sessie-auth met `password_hash()`/`password_verify()` (bcrypt), CSRF-tokens per formulier, honeypot-veld op het contactformulier.
 
 ## Commands
@@ -32,6 +27,11 @@ Content van Home, Tand en Team wordt beheerd via een inline visuele editor (`/ad
 ```bash
 php scripts/install.php --user=admin --password=...   # schema + seed + admin-user (idempotent)
 php -S localhost:8000 -t public public/router.php      # lokale dev-server
+composer install                                       # dev-dependencies + pre-commit hook installeren
+composer check                                          # lint (phpcs) + static analysis (phpstan) + tests (phpunit)
+composer lint                                           # alleen phpcs
+composer stan                                           # alleen phpstan
+composer test                                           # alleen phpunit
 ```
 
 ## Mappenstructuur
@@ -61,4 +61,7 @@ Zie `plan.md` §3. Namespaces volgen PSR-achtige mapping: `App\Db` → `app/Db`,
 
 ## Testen
 
-Geen geautomatiseerde testsuite (bewust, gezien de scope). Testaanpak: handmatige smoke-checklist in `README.md` §Testen, plus herhaald draaien van `scripts/install.php` om idempotentie te bevestigen.
+- Automatische testsuite met PHPUnit in `tests/` (unit-tests voor `app/Services`, `app/Http`; geen database- of view-rendering-afhankelijkheden — `tests/bootstrap.php` laadt alleen de autoloader en de globale helpers, zonder sessie te starten of te verbinden met de database).
+- Lint via PHP_CodeSniffer (`phpcs.xml`, PSR-12) en static analysis via PHPStan (`phpstan.neon`, level 5). `app/views/**` is uitgesloten van phpcs (HTML/PHP-mix, niet op PSR-12 gebouwd).
+- `composer install` installeert automatisch een git pre-commit hook (`tools/pre-commit`, geïnstalleerd door `Tools\HookInstaller`) die `composer check` draait en de commit blokkeert bij falende lint/stan/tests.
+- Daarnaast: handmatige smoke-checklist in `README.md` §Testen, plus herhaald draaien van `scripts/install.php` om idempotentie te bevestigen — dit dekt DB-/view-integratiepaden die de unit-tests bewust niet aanraken.

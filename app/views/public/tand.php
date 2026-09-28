@@ -25,7 +25,9 @@ ob_start();
             <div class="tand-bar__shape" aria-hidden="true"></div>
             <div class="container tand-bar__row">
                 <?php if ($isImageFirst): ?>
-                    <div class="tand-grid__cell tand-grid__cell--image" style="background-image:url('/uploads/<?= e($item['image_path'] ?? '') ?>')" role="img" aria-label="<?= e(strip_tags($item['alt'] ?? $item['title'])) ?>" <?= edit($ref . ':image_path', 'image') ?><?= $editing ? ' data-edit-alt="' . e($ref . ':alt') . '"' : '' ?>></div>
+                    <div class="tand-grid__cell tand-grid__cell--image">
+                        <img src="/uploads/<?= e($item['image_path'] ?? '') ?>" alt="<?= e(strip_tags($item['alt'] ?? $item['title'])) ?>" loading="lazy" <?= edit($ref . ':image_path', 'image') ?><?= $editing ? ' data-edit-alt="' . e($ref . ':alt') . '"' : '' ?>>
+                    </div>
                     <div class="tand-grid__cell tand-grid__cell--text">
                         <div>
                             <h3 <?= edit($ref . ':title', 'text') ?>><?= rich($item['title'], 'text') ?></h3>
@@ -39,7 +41,9 @@ ob_start();
                             <p <?= edit($ref . ':body', 'richtext') ?>><?= rich($item['body'], 'richtext') ?></p>
                         </div>
                     </div>
-                    <div class="tand-grid__cell tand-grid__cell--image" style="background-image:url('/uploads/<?= e($item['image_path'] ?? '') ?>')" role="img" aria-label="<?= e(strip_tags($item['alt'] ?? $item['title'])) ?>" <?= edit($ref . ':image_path', 'image') ?><?= $editing ? ' data-edit-alt="' . e($ref . ':alt') . '"' : '' ?>></div>
+                    <div class="tand-grid__cell tand-grid__cell--image">
+                        <img src="/uploads/<?= e($item['image_path'] ?? '') ?>" alt="<?= e(strip_tags($item['alt'] ?? $item['title'])) ?>" loading="lazy" <?= edit($ref . ':image_path', 'image') ?><?= $editing ? ' data-edit-alt="' . e($ref . ':alt') . '"' : '' ?>>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
@@ -53,7 +57,9 @@ ob_start();
     <div class="tand-bar" data-edit-item="tandwerk:__ID__" data-id="__ID__">
         <div class="tand-bar__shape" aria-hidden="true"></div>
         <div class="container tand-bar__row">
-            <div class="tand-grid__cell tand-grid__cell--image" data-edit-type="image" data-edit="tandwerk:__ID__:image_path" data-edit-alt="tandwerk:__ID__:alt" style="background-image:url('')"></div>
+            <div class="tand-grid__cell tand-grid__cell--image">
+                <img src="" alt="" loading="lazy" data-edit-type="image" data-edit="tandwerk:__ID__:image_path" data-edit-alt="tandwerk:__ID__:alt">
+            </div>
             <div class="tand-grid__cell tand-grid__cell--text">
                 <div>
                     <h3 data-edit-type="text" data-edit="tandwerk:__ID__:title">Nieuw werkstuk</h3>

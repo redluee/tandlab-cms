@@ -72,6 +72,8 @@ Zie `plan.md` §3 voor de volledige projectstructuur en architectuurbeslissingen
 
 ## Testen
 
+- `composer install` (installeert dev-dependencies + git pre-commit hook).
+- `composer check` — lint (phpcs), static analysis (phpstan) en de PHPUnit-testsuite (`tests/`); draait automatisch bij elke `git commit`.
 - `php -S localhost:8000 -t public public/router.php` voor lokaal draaien.
 - `php scripts/install.php` herhaaldelijk uitvoeren om idempotentie te controleren.
 - Handmatige checklist:

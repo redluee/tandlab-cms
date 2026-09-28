@@ -1,4 +1,5 @@
 <?php
+
 // Router for the PHP built-in development server.
 // Usage: php -S localhost:8000 -t public public/router.php
 

@@ -5,3 +5,9 @@
 !/storage/logs/.gitkeep
 /config/config.ini
 /.claude/worktrees/
+/.claude/skills/
+/.agents/
+/skills-lock.json
+/vendor/
+/.phpunit.cache/
+/.phpunit.result.cache
