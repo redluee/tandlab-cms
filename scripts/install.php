@@ -27,13 +27,13 @@ $sql = file_get_contents($schemaFile);
 $pdo->exec($sql);
 echo "Schema toegepast.\n";
 
-// 2. Branding assets (logo, bgHero) — always refreshed, not driver-dependent seed data.
-$brandingDir = $config['uploads']['path'] . '/branding';
-if (!is_dir($brandingDir)) {
-    mkdir($brandingDir, 0775, true);
+// 2. Branding assets (logo, bgHero) — gitignored, so they must be generated on every server.
+$uploadsDir = $config['uploads']['path'];
+if (!is_dir($uploadsDir)) {
+    mkdir($uploadsDir, 0775, true);
 }
-copyAsWebp($root . '/content/home/images/logo.png', $brandingDir . '/logo.webp');
-copyAsWebp($root . '/content/home/images/bgHero.png', $brandingDir . '/bghero.webp');
+copyAsWebp($root . '/content/home/images/logo.png', $uploadsDir . '/logo.webp');
+copyAsWebp($root . '/content/home/images/bgHero.png', $uploadsDir . '/bghero.webp');
 
 // 3. Seed tandwerk (only if empty)
 $tandCount = (int) $pdo->query('SELECT COUNT(*) FROM tandwerk')->fetchColumn();
@@ -124,9 +124,8 @@ $defaults = [
     'address' => "Tandlab\nZandweg 196A\n3454 HE De Meern",
     'phone' => '030-2441135',
     'email' => 'info@tandlab.nl',
-    'email_recipients' => 'info@tandlab.nl',
     'opening_hours' => "MA t/m DO: 8.00 – 12.30. 13.00 - 16.45 uur.\nVR: 8.00 t/m 13.00 uur",
-    'map_embed_url' => 'https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d2450.519494196115!2d5.081752!3d52.106676!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c66fa1119f7919%3A0x328aa4c0c6a019dd!2sMarc+Vernooij+Tandtechniek+B.V.!5e0!3m2!1sen!2snl!4v1426084467094',
+    'map_embed_url' => 'https://www.google.com/maps?q=Zandweg+196A,+3454+HE+De+Meern&output=embed',
     'hero_kicker' => 'Tandlab',
     'hero_title' => 'UW SPECIALIST IN KROON- EN BRUGWERK',
     'hero_intro' => 'Sinds 1985 vervaardigen wij hoogwaardig kroon- en brugwerk. Als erkend leerbedrijf combineert ons vaste team jarenlange ervaring met actuele technieken om passende werkstukken voor uw praktijk of gebit te leveren.',
@@ -140,6 +139,11 @@ $defaults = [
     'map_note' => 'De zandweg is eenrichtingsverkeer richting het westen',
     'hero_interval' => '6',
 ];
+
+// Eerdere seed-versies wezen naar een andere tandtechniek-locatie.
+if (str_contains($existing['map_embed_url'] ?? '', 'Marc+Vernooij')) {
+    Setting::set('map_embed_url', $defaults['map_embed_url']);
+}
 
 foreach ($defaults as $key => $value) {
     if (!array_key_exists($key, $existing) || $existing[$key] === '') {
@@ -156,6 +160,9 @@ $password = $options['password'] ?? (getenv('ADMIN_PASSWORD') ?: null);
 if (User::findByUsername($username ?? 'admin') === null) {
     if (!$username || !$password) {
         echo "Geen admin-gebruiker aangemaakt (geef --user=... --password=... op om er een aan te maken).\n";
+    } elseif (strlen($password) < 12 || in_array(strtolower($password), ['kieseensterkwachtwoord', 'password', 'wachtwoord', 'admin'], true)) {
+        fwrite(STDERR, "Wachtwoord te zwak: gebruik minimaal 12 tekens en geen voorbeeldwachtwoord.\n");
+        exit(1);
     } else {
         User::create($username, $password);
         echo "Admin-gebruiker '{$username}' aangemaakt.\n";
@@ -181,7 +188,7 @@ foreach (Setting::all() as $key => $value) {
 $registered = 0;
 foreach (glob($config['uploads']['path'] . '/*.webp') ?: [] as $file) {
     $name = basename($file);
-    if (in_array($name, ['logo.webp', 'bghero.webp'], true) || Image::findByFilename($name) !== null) {
+    if (Image::isProtected($name) || Image::findByFilename($name) !== null) {
         continue;
     }
     Image::create($name, $labels[$name] ?? pathinfo($name, PATHINFO_FILENAME));
@@ -213,5 +220,4 @@ function copyAsWebp(string $source, string $destination): void
     imagealphablending($image, true);
     imagesavealpha($image, true);
     imagewebp($image, $destination, 90);
-    imagedestroy($image);
 }

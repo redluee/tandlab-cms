@@ -26,7 +26,7 @@ $router->get('/team', fn () => $public->team());
 // Auth
 $router->get('/admin/login', fn () => $auth->showLogin());
 $router->post('/admin/login', fn () => $auth->login());
-$router->get('/admin/logout', fn () => $auth->logout());
+$router->post('/admin/logout', fn () => $auth->logout());
 
 // Admin (protected)
 $requireAuth = static function (): void {

@@ -11,6 +11,7 @@ use App\Models\TeamMember;
 use App\Services\Csrf;
 use App\Services\ImageService;
 use App\Services\PrivacyStatement;
+use App\Services\Validator;
 use RuntimeException;
 
 class AdminController
@@ -40,14 +41,14 @@ class AdminController
     {
         $this->assertCsrf();
 
-        $fields = ['email_recipients', 'map_embed_url'];
-
-        $data = [];
-        foreach ($fields as $field) {
-            $data[$field] = trim((string) ($_POST[$field] ?? ''));
+        $mapUrl = trim((string) ($_POST['map_embed_url'] ?? ''));
+        if ($mapUrl !== '' && !Validator::googleMapsEmbedUrl($mapUrl)) {
+            $_SESSION['admin_error'] = 'Ongeldige kaart-URL: gebruik een Google Maps embed-URL (https://www.google.com/maps/embed?... of https://www.google.com/maps?q=...&output=embed).';
+            header('Location: /admin/instellingen');
+            exit;
         }
 
-        Setting::setMany($data);
+        Setting::set('map_embed_url', $mapUrl);
 
         if (!empty($_FILES['privacy_pdf']['name'])) {
             try {
@@ -168,10 +169,14 @@ class AdminController
         $this->assertCsrf();
 
         $filename = (string) ($_POST['filename'] ?? '');
-        $uploadsPath = config_get()['uploads']['path'];
-        $real = realpath($uploadsPath . '/' . $filename);
+        $uploadsPath = realpath(config_get()['uploads']['path']);
+        $real = realpath(config_get()['uploads']['path'] . '/' . $filename);
 
-        if ($real && str_starts_with($real, realpath($uploadsPath)) && is_file($real)) {
+        if (Image::isProtected($filename)) {
+            $_SESSION['admin_error'] = 'Deze afbeelding is onderdeel van de huisstijl en kan niet worden verwijderd.';
+        } elseif (isset(Image::pageUsage()[$filename])) {
+            $_SESSION['admin_error'] = 'Deze afbeelding wordt nog gebruikt op de website. Vervang haar eerst in de editor.';
+        } elseif ($uploadsPath && $real && str_starts_with($real, $uploadsPath . DIRECTORY_SEPARATOR) && is_file($real)) {
             unlink($real);
             Image::deleteByFilename($filename);
         }

@@ -11,7 +11,7 @@
 - PHP 8.4 (aanwezig), PDO + `pdo_sqlite`/`pdo_mysql`.
 - GD (`gd` aanwezig) voor image resize → WebP.
 - Geen framework, geen Composer-packages, geen front-end build. Router = zelfgeschreven front controller.
-- Sessie-auth, `password_hash()` (bcrypt), CSRF-tokens, honeypot.
+- Sessie-auth, `password_hash()` (bcrypt), CSRF-tokens, login-throttle.
 
 ## 3. Projectstructuur
 ```
@@ -30,18 +30,17 @@ Tandlab-CMS/
 │   │   └── Router.php        # static route table + params, 404
 │   ├── controllers/
 │   │   ├── PublicController.php
-│   │   ├── ContactController.php
 │   │   ├── AuthController.php
 │   │   └── AdminController.php   # pages, tand, team, settings, messages, media
 │   ├── models/               # Setting, Tandwerk, TeamMember, Message, User
 │   ├── services/
 │   │   ├── ImageService.php  # validate → resize → WebP → uploads/
-│   │   ├── Mailer.php        # mail() default, SMTP-ready
+│   │   ├── ErrorHandler.php, SecurityHeaders.php, LoginThrottle.php
 │   │   ├── Validator.php, Csrf.php, Auth.php
 │   └── views/
 │       ├── layout/           # nav, hero, contact-section, footer, admin-shell
 │       ├── public/           # home.php, tand.php, team.php
-│       └── admin/            # login, home, tand, team, settings, berichten, afbeeldingen
+│       └── admin/            # login, home, tand, team, settings,  afbeeldingen
 ├── public/
 │   ├── index.php             # front controller
 │   ├── .htaccess             # + nginx voorbeeld in README
@@ -72,9 +71,8 @@ Alle query's via prepared statements.
 | `/` | Home (hero slider, intro, USP's/trust, `#contact`, footer) |
 | `/tand` | Tand (grid 2×3) |
 | `/team` | Team (medewerkers + portretten) |
-| `/contact/submit` | POST contactformulier (CSRF + honeypot) |
 | `/admin` | redirect → login of dashboard |
-| `/admin/{login,logout,paginas,tand,team,instellingen,berichten,afbeeldingen}` | CMS |
+| `/admin/{login,logout,paginas,tand,team,instellingen,afbeeldingen}` | CMS |
 | anders | 404 |
 
 Server: `.htaccess` (Apache) + `php -S` fallback-routing in `index.php`; nginx voorbeeld in README.
@@ -94,19 +92,16 @@ Data komt uit `tandwerk` (geseede als Laboratorium, Samenwerking, Behandelkamer,
 
 **Footer**: linkerhelft contactinfo (adres, telefoon, e-mail, openingstijden), rechterhelft ge-embedde Google Map op adres van Tandlab.
 
-## 7. Contactsectie (alle pagina's) + formulier
-- Blok: adres, telefoon, e-mail, openingstijden, privacy-statement-link, embedded map.
-- Formuliervelden: naam, e-mail, telefoon (optioneel), onderwerp (vraag / order / scan aanleveren), bericht.
-- Bescherming: CSRF-token, honeypot-veld, basis-sanitatie/validatie, `htmlspecialchars` output.
-- Opslag in `messages` + optionele e-mailnotificatie (`Mailer`) naar ontvangers uit instellingen.
+## 7. Contactsectie (alle pagina's)
+- Blok: adres, telefoon, e-mail (`mailto:`), openingstijden, privacy-statement-link, embedded map.
+- Bewust geen contactformulier: bezoekers bellen of mailen rechtstreeks (geen `messages`-tabel, geen `Mailer`).
 
 ## 8. CMS (admin, Nederlands, in huisstijl)
 - **Login**: sessie, bcrypt, CSRF; eerste admin via install-script (CLI pwd). Formulier-gebaseerd, geen registratie.
 - **Pagina's/Home**: hero titel, subtitel(s), intro, USP's, hero-slide-afbeeldingen droppen.
 - **Tand**: werkstukken CRUD (titel, omschrijving, foto, volgorde, actief) → stuurt de 2×3 grid.
 - **Team**: leden CRUD (naam, functie, bio, foto-upload, volgorde, actief).
-- **Instellingen**: NAW, telefoon, e-mail + ontvangers, openingstijden, map-URL, privacy-url.
-- **Berichten**: inbox (lees/ongelezen, verwijderen).
+- **Instellingen**: map-URL (alleen Google Maps embed), privacy-statement (PDF).
 - **Afbeeldingen**: uploader met voorvertoning en automatische optimalisatie (§9).
 
 ## 9. Image pipeline (ImageService, GD)
@@ -117,7 +112,9 @@ Data komt uit `tandwerk` (geseede als Laboratorium, Samenwerking, Behandelkamer,
 ## 10. Beveiliging
 - PDO prepared statements; output-escaped; sessie (hardened cookie flags), sessie-rotatie bij login.
 - CSRF op álle admin- en publieke formulieren.
-- Honeypot, rate-limit-lite (timestamp per sessie) op contactformulier.
+- Login-throttle: 5 mislukte pogingen per IP per 15 minuten (`login_attempts`); uitloggen via POST + CSRF.
+- Globale foutafhandeling (`ErrorHandler`): `display_errors` uit tenzij `APP_DEBUG=1`, logging naar `storage/logs/php-error.log`, nette 500-pagina.
+- Security headers via `SecurityHeaders` (PHP) en `public/.htaccess`.
 - Image-upload: whitelist + GD-recodering (geen scriptable bestanden opgeslagen).
 - `.htaccess` blokkeert `storage/` en `config/`; `public/` is enige documentroot.
 
@@ -139,8 +136,7 @@ Bevat: projectoverzicht & huisstijl (kleuren, patronen), stack, commands (`php -
 1. Skelet: config, bootstrap, Database, Router, layout-partials + basis CSS.
 2. Schema + install/seed-script; verifieer seed uit `content/`.
 3. Publieke pagina's (Home, Tand, Team) in Concept 1-layout met geseede data.
-4. Contactformulier (CSRF/honeypot) + `messages`-opslag + notificatie.
-5. Admin: login → Home-instellingen → Tand → Team → Instellingen → Berichten → Afbeeldingen.
+5. Admin: login → Home-instellingen → Tand → Team → Instellingen → Afbeeldingen.
 6. ImageService pipeline klaarzetten en door admin-/seed-flow laten lopen.
 7. Testen (zie §15), README + nginx-voorbeeld, AGENTS.md afronden.
 
@@ -148,7 +144,7 @@ Bevat: projectoverzicht & huisstijl (kleuren, patronen), stack, commands (`php -
 - `php -S localhost:8000 -t public` voor dev.
 - `php scripts/install.php` herhaalbaar uitvoeren op een lege DB (idempotentie-check).
 - Basale regressie via een klein `scripts/smoke.php` (routes 200, formulier-CSRF werkt, login-werkcyclus) óf handmatige checklist.
-- Handmatige QA: mobiel/desktop hero-slider, fixed nav, contactformulier-ontvangst.
+- Handmatige QA: mobiel/desktop hero-slider, fixed nav.
 
 ## Open aannames
 - Mail v1 via PHP `mail()`; SMTP later configureerbaar (geen extra dependency).

@@ -61,7 +61,24 @@ a {
     font-weight: 600;
 }
 
-.admin-sidebar nav a.admin-logout:hover {
+.admin-sidebar nav .admin-logout-form {
+    margin: 0;
+}
+
+.admin-sidebar nav button.admin-logout {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    border: 0;
+    background: none;
+    color: var(--admin-gray-200);
+    font: inherit;
+    font-size: 0.95rem;
+    text-align: left;
+    cursor: pointer;
+}
+
+.admin-sidebar nav button.admin-logout:hover {
     background: rgba(220, 53, 69, 0.15);
     color: #ff6b6b;
 }

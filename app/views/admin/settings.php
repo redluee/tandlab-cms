@@ -31,10 +31,6 @@ function sval(array $settings, string $key): string
         <input type="hidden" name="csrf_token" value="<?= e(\App\Services\Csrf::token()) ?>">
 
         <div>
-            <label for="email_recipients">Ontvangers contactformulier (komma-gescheiden)</label>
-            <input type="text" id="email_recipients" name="email_recipients" value="<?= sval($settings, 'email_recipients') ?>">
-        </div>
-        <div>
             <label for="map_embed_url">Google Maps embed-URL</label>
             <input type="text" id="map_embed_url" name="map_embed_url" value="<?= sval($settings, 'map_embed_url') ?>">
         </div>

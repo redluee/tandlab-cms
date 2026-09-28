@@ -89,7 +89,6 @@ final class RouterTest extends TestCase
     {
         $router = new Router();
         $match = new ReflectionMethod(Router::class, 'match');
-        $match->setAccessible(true);
 
         $this->assertNull($match->invoke($router, '/tand/{slug}', '/tand'));
     }

@@ -81,6 +81,11 @@ class Image
         return $usage;
     }
 
+    public static function isProtected(string $filename): bool
+    {
+        return in_array($filename, ['logo.webp', 'bghero.webp'], true) || str_starts_with($filename, 'branding/');
+    }
+
     public static function update(int $id, array $data): void
     {
         $pdo = Database::connect(config_get()['db']);

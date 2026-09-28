@@ -2,7 +2,7 @@
 
 ## Projectoverzicht
 
-Custom PHP CMS voor Tandlab (tandtechnisch laboratorium, kroon- en brugwerk, De Meern). Eén concept wordt gebouwd: "Concept 1". Publieke site (Home, Tand, Team, gedeelde `#contact`-sectie) + Nederlandstalig admin-CMS.
+Custom PHP CMS voor Tandlab (tandtechnisch laboratorium, kroon- en brugwerk, De Meern). Eén concept wordt gebouwd: "Concept 1". Publieke site (Home, Tand, Team, gedeelde `#contact`-sectie met statische contactgegevens, geen formulier) + Nederlandstalig admin-CMS.
 
 ## Visuele editor
 
@@ -16,16 +16,17 @@ Content van Home, Tand en Team wordt beheerd via een inline visuele editor (`/ad
 
 ## Stack
 
-- PHP 8.4, PDO (`pdo_sqlite` dev, `pdo_mysql` productie) achter één driver-toggle in `config/config.php`.
+- PHP 8.4+ (8.5 getest), PDO (`pdo_sqlite` dev, `pdo_mysql` productie) achter één driver-toggle in `config/config.php`.
 - GD voor image resize + WebP-conversie (`app/Services/ImageService.php`).
 - Geen front-end build. Eigen front controller + Router (`app/Http/Router.php`).
 - Composer wordt uitsluitend als dev-tooling gebruikt (PHPUnit, PHP_CodeSniffer, PHPStan) — geen runtime-dependencies, geen build-step voor productie.
-- Sessie-auth met `password_hash()`/`password_verify()` (bcrypt), CSRF-tokens per formulier, honeypot-veld op het contactformulier.
+- Sessie-auth met `password_hash()`/`password_verify()` (bcrypt), CSRF-tokens per formulier.
 
 ## Commands
 
 ```bash
-php scripts/install.php --user=admin --password=...   # schema + seed + admin-user (idempotent)
+php scripts/install.php --user=admin --password=...   # schema + seed + admin-user (idempotent, wachtwoord min. 12 tekens)
+php scripts/backup.php                                 # DB-dump + tar.gz van uploads/privacy naar storage/backups
 php -S localhost:8000 -t public public/router.php      # lokale dev-server
 composer install                                       # dev-dependencies + pre-commit hook installeren
 composer check                                          # lint (phpcs) + static analysis (phpstan) + tests (phpunit)
@@ -54,7 +55,11 @@ Zie `plan.md` §3. Namespaces volgen PSR-achtige mapping: `App\Db` → `app/Db`,
 ## Beveiliging
 
 - CSRF-token verplicht op alle POST-formulieren (publiek én admin); validatie via `App\Services\Csrf`.
-- Contactformulier: honeypot-veld (`website`) + sessie-rate-limit (30s) naast CSRF.
+- Login: throttle per IP (5 mislukte pogingen / 15 min, tabel `login_attempts`); logout is POST + CSRF.
+- Foutafhandeling: `App\Services\ErrorHandler` (geregistreerd in `bootstrap.php`) zet `display_errors` uit tenzij `APP_DEBUG=1`, logt naar `storage/logs/` en toont `app/views/public/500.php`.
+- Security headers: `App\Services\SecurityHeaders` + `public/.htaccess`.
+- `map_embed_url` wordt gevalideerd met `Validator::googleMapsEmbedUrl()` (alleen `https://www.google.com/maps/embed` of `.../maps?...&output=embed`), bij opslaan én bij tonen.
+- Mediabibliotheek: afbeeldingen die op een pagina in gebruik zijn en `logo.webp`/`bghero.webp` (`Image::isProtected()`) kunnen niet worden verwijderd.
 - Sessie-cookies: `httponly`, `samesite=Lax`, `secure` wanneer HTTPS; sessie-rotatie bij login (`session_regenerate_id`).
 - Upload-whitelist (jpeg/png/webp/gif) + GD-recodering naar WebP — geen scriptable bestanden worden opgeslagen.
 - `storage/` en `config/` horen buiten de documentroot te staan in productie; root-`.htaccess` blokkeert ze als extra laag.

@@ -25,4 +25,21 @@ class Validator
     {
         return trim((string) $value);
     }
+
+    public static function googleMapsEmbedUrl(?string $value): bool
+    {
+        $parts = parse_url((string) $value);
+        if ($parts === false || ($parts['scheme'] ?? '') !== 'https' || ($parts['host'] ?? '') !== 'www.google.com') {
+            return false;
+        }
+        if (isset($parts['user']) || isset($parts['port'])) {
+            return false;
+        }
+        $path = $parts['path'] ?? '';
+        if ($path === '/maps/embed') {
+            return true;
+        }
+        parse_str($parts['query'] ?? '', $query);
+        return $path === '/maps' && ($query['output'] ?? '') === 'embed';
+    }
 }

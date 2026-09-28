@@ -36,3 +36,10 @@ CREATE TABLE IF NOT EXISTS images (
     display_name VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS login_attempts (
+    id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    ip VARCHAR(45) NOT NULL,
+    attempted_at INT UNSIGNED NOT NULL,
+    INDEX idx_login_attempts_ip (ip, attempted_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

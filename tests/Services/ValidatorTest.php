@@ -59,4 +59,25 @@ final class ValidatorTest extends TestCase
         $this->assertSame('Tandlab', Validator::clean("  Tandlab\n"));
         $this->assertSame('', Validator::clean(null));
     }
+
+    #[DataProvider('mapUrls')]
+    public function testGoogleMapsEmbedUrl(string $url, bool $valid): void
+    {
+        $this->assertSame($valid, Validator::googleMapsEmbedUrl($url));
+    }
+
+    public static function mapUrls(): array
+    {
+        return [
+            'embed pb' => ['https://www.google.com/maps/embed?pb=!1m14', true],
+            'search embed' => ['https://www.google.com/maps?q=Zandweg+196A&output=embed', true],
+            'http' => ['http://www.google.com/maps/embed?pb=1', false],
+            'other host' => ['https://evil.example/maps/embed', false],
+            'lookalike host' => ['https://www.google.com.evil.example/maps/embed', false],
+            'userinfo' => ['https://www.google.com@evil.example/maps/embed', false],
+            'javascript' => ['javascript:alert(1)', false],
+            'plain maps page' => ['https://www.google.com/maps?q=x', false],
+            'empty' => ['', false],
+        ];
+    }
 }

@@ -58,7 +58,6 @@ class ImageService
             imagealphablending($resized, false);
             imagesavealpha($resized, true);
             imagecopyresampled($resized, $image, 0, 0, 0, 0, $maxWidth, $newHeight, $width, $height);
-            imagedestroy($image);
             $image = $resized;
         }
 
@@ -72,7 +71,6 @@ class ImageService
         $destination = $uploadsRoot . '/' . $filename;
 
         imagewebp($image, $destination, 82);
-        imagedestroy($image);
 
         return $filename;
     }

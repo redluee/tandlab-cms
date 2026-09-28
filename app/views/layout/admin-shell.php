@@ -29,7 +29,10 @@ $navItems = [
                     <?= e($item['label']) ?>
                 </a>
             <?php endforeach; ?>
-            <a href="/admin/logout" class="admin-logout">Uitloggen</a>
+            <form method="post" action="/admin/logout" class="admin-logout-form">
+                <input type="hidden" name="csrf_token" value="<?= e(\App\Services\Csrf::token()) ?>">
+                <button type="submit" class="admin-logout">Uitloggen</button>
+            </form>
         </nav>
     </aside>
     <main class="admin-main">

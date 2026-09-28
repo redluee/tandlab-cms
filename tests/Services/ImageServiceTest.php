@@ -76,7 +76,6 @@ final class ImageServiceTest extends TestCase
         $image = imagecreatetruecolor($width, $height);
         imagefill($image, 0, 0, imagecolorallocate($image, 100, 200, 150));
         imagepng($image, $path);
-        imagedestroy($image);
         return $path;
     }
 }

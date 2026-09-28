@@ -728,6 +728,46 @@
 
     window.addEventListener('beforeunload', beforeUnloadHandler);
 
+    function confirmLeave() {
+        return TandlabDialog.confirm({
+            title: 'Niet-opgeslagen wijzigingen',
+            message: 'Je hebt niet-opgeslagen wijzigingen. Weet je zeker dat je deze pagina wilt verlaten?',
+            okLabel: 'Pagina verlaten',
+            cancelLabel: 'Blijven',
+            danger: true
+        });
+    }
+
+    document.addEventListener('keydown', function (event) {
+        var isReload = event.key === 'F5' || ((event.ctrlKey || event.metaKey) && (event.key === 'r' || event.key === 'R'));
+        if (!isReload || !hasChanges()) {
+            return;
+        }
+        event.preventDefault();
+        confirmLeave().then(function (ok) {
+            if (ok) {
+                window.removeEventListener('beforeunload', beforeUnloadHandler);
+                window.location.reload();
+            }
+        });
+    });
+
+    history.pushState({ editorGuard: true }, '');
+    window.addEventListener('popstate', function () {
+        if (!hasChanges()) {
+            window.removeEventListener('beforeunload', beforeUnloadHandler);
+            history.back();
+            return;
+        }
+        history.pushState({ editorGuard: true }, '');
+        confirmLeave().then(function (ok) {
+            if (ok) {
+                window.removeEventListener('beforeunload', beforeUnloadHandler);
+                history.go(-2);
+            }
+        });
+    });
+
     document.addEventListener('click', function (event) {
         var link = event.target.closest ? event.target.closest('a[href]') : null;
         if (!link || !hasChanges()) {

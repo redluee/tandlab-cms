@@ -16,6 +16,10 @@ spl_autoload_register(function (string $class): void {
 
 $config = require __DIR__ . '/../config/config.php';
 
+\App\Services\ErrorHandler::register($config['app']['debug'], $config['app']['root'] . '/storage/logs');
+
+\App\Services\SecurityHeaders::send();
+
 if (session_status() === PHP_SESSION_NONE) {
     session_set_cookie_params([
         'lifetime' => 0,
