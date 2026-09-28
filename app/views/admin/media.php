@@ -2,6 +2,20 @@
 /** @var array $images */
 /** @var array $usage */
 $usage = $usage ?? [];
+$pageLabels = ['home' => 'Home', 'tand' => 'Tand', 'team' => 'Team'];
+$filter = $_GET['pagina'] ?? '';
+if ($filter !== 'geen' && !isset($pageLabels[$filter])) {
+    $filter = '';
+}
+$images = array_values(array_filter($images, static function (array $image) use ($usage, $filter): bool {
+    $pages = $usage[$image['filename']] ?? [];
+    return match (true) {
+        $filter === '' => true,
+        $filter === 'geen' => $pages === [],
+        default => in_array($filter, $pages, true),
+    };
+}));
+$filterOptions = ['' => 'Alle', 'home' => 'Home', 'tand' => 'Tand', 'team' => 'Team', 'geen' => 'Geen pagina'];
 
 ob_start();
 $error = $_SESSION['admin_error'] ?? null;
@@ -114,6 +128,55 @@ unset($_SESSION['admin_error']);
     .media-grid img {
         cursor: pointer;
     }
+
+    .media-empty {
+        grid-column: 1 / -1;
+        margin: 0;
+    }
+
+    .media-filter {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+
+    .media-filter a {
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: #f4f5f6;
+        color: #4a4f54;
+        text-decoration: none;
+        font-size: 0.85rem;
+    }
+
+    .media-filter a.is-active {
+        background: #78c39c;
+        color: #fff;
+    }
+
+    .media-grid figure {
+        position: relative;
+    }
+
+    .media-unused {
+        position: absolute;
+        top: 34px;
+        right: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: rgba(35, 39, 42, 0.85);
+        color: #fff;
+    }
+
+    .media-unused svg {
+        width: 16px;
+        height: 16px;
+    }
 </style>
 
 <div class="admin-header">
@@ -132,14 +195,25 @@ unset($_SESSION['admin_error']);
 </div>
 <div class="card">
     <h2 style="margin-top:0">Mediabibliotheek</h2>
+    <nav class="media-filter" aria-label="Filter op pagina">
+        <?php foreach ($filterOptions as $value => $label): ?>
+            <a href="/admin/afbeeldingen<?= $value !== '' ? '?pagina=' . e($value) : '' ?>"<?= $filter === $value ? ' class="is-active" aria-current="true"' : '' ?>><?= e($label) ?></a>
+        <?php endforeach; ?>
+    </nav>
     <div class="media-grid">
         <?php foreach ($images as $image): ?>
+            <?php $pages = $usage[$image['filename']] ?? []; ?>
             <figure>
                 <figcaption><?= e($image['display_name']) ?></figcaption>
+                <?php if ($pages === []): ?>
+                    <span class="media-unused" title="Niet gebruikt op een pagina" role="img" aria-label="Niet gebruikt op een pagina">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 5.1A10.8 10.8 0 0 1 12 5c6 0 10 7 10 7a17 17 0 0 1-3.2 4M6.6 6.6A16.6 16.6 0 0 0 2 12s4 7 10 7a9.7 9.7 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
+                    </span>
+                <?php endif; ?>
                 <img src="/uploads/<?= e($image['filename']) ?>" alt="" onclick="openLightbox('/uploads/<?= e($image['filename']) ?>', <?= e(json_encode($image['display_name'])) ?>)">
                 <div style="display:flex; flex-direction:column; gap:6px; margin-top:6px">
                     <button type="button" class="btn" style="width:100%" onclick="openEditModal(<?= e(json_encode($image)) ?>)">Hernoemen</button>
-                    <form method="post" action="/admin/afbeeldingen/verwijderen" onsubmit="return confirmDelete(event, <?= e(json_encode($usage[$image['filename']] ?? [])) ?>)">
+                    <form method="post" action="/admin/afbeeldingen/verwijderen" onsubmit="return confirmDelete(event, <?= e(json_encode(array_map(fn ($p) => $pageLabels[$p], $pages))) ?>)">
                         <input type="hidden" name="csrf_token" value="<?= e(\App\Services\Csrf::token()) ?>">
                         <input type="hidden" name="filename" value="<?= e($image['filename']) ?>">
                         <button type="submit" class="btn btn--danger" style="width:100%">Verwijderen</button>
@@ -148,7 +222,7 @@ unset($_SESSION['admin_error']);
             </figure>
         <?php endforeach; ?>
         <?php if (empty($images)): ?>
-            <p>Nog geen afbeeldingen geüpload.</p>
+            <p class="media-empty"><?= $filter === '' ? 'Nog geen afbeeldingen geüpload.' : 'Geen afbeeldingen gevonden voor dit filter.' ?></p>
         <?php endif; ?>
     </div>
 </div>
