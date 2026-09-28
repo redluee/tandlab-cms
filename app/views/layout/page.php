@@ -12,7 +12,11 @@ $canonicalPath = match ($active ?? '') {
     default => '/',
 };
 $canonicalUrl = $siteUrl . $canonicalPath;
-$ogImage = $siteUrl . '/uploads/' . ($settings['hero_slide_1'] ?? '');
+$heroSlidesForOg = json_decode($settings['hero_slides'] ?? '[]', true);
+$ogImageFile = is_array($heroSlidesForOg) && !empty($heroSlidesForOg)
+    ? array_values($heroSlidesForOg)[0]
+    : ($settings['hero_slide_1'] ?? '');
+$ogImage = $siteUrl . '/uploads/' . $ogImageFile;
 ?>
 <!DOCTYPE html>
 <html lang="nl">
@@ -32,7 +36,7 @@ $ogImage = $siteUrl . '/uploads/' . ($settings['hero_slide_1'] ?? '');
     <meta property="og:description" content="<?= e($metaDescription) ?>">
     <?php endif; ?>
     <meta property="og:url" content="<?= e($canonicalUrl) ?>">
-    <?php if (!empty($settings['hero_slide_1'])): ?>
+    <?php if (!empty($ogImageFile)): ?>
     <meta property="og:image" content="<?= e($ogImage) ?>">
     <?php endif; ?>
     <meta name="twitter:card" content="summary_large_image">
@@ -58,7 +62,7 @@ $ogImage = $siteUrl . '/uploads/' . ($settings['hero_slide_1'] ?? '');
             'addressLocality' => 'De Meern',
             'addressCountry' => 'NL',
         ],
-    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?></script>
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?></script>
     <?php endif; ?>
 </head>
 <body<?= $editing ? ' class="is-editing"' : '' ?>>

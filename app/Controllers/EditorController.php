@@ -111,6 +111,13 @@ class EditorController
             http_response_code(422);
             echo json_encode(['ok' => false, 'error' => $e->getMessage()]);
             return;
+        } catch (\Throwable $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            http_response_code(500);
+            echo json_encode(['ok' => false, 'error' => 'Opslaan mislukt door een onverwachte fout.']);
+            return;
         }
 
         echo json_encode(['ok' => true, 'ids' => $ids]);
@@ -172,6 +179,7 @@ class EditorController
     private function saveTandwerk(array $payload): array
     {
         $ids = [];
+        $nextSortOrder = null;
 
         foreach ((array) ($payload['create'] ?? []) as $item) {
             if (!is_array($item) || empty($item['tmp'])) {
@@ -187,7 +195,10 @@ class EditorController
             if (trim((string) ($data['title'] ?? '')) === '' || trim((string) ($data['body'] ?? '')) === '') {
                 throw new RuntimeException('Titel en tekst zijn verplicht voor een nieuw werkstuk.');
             }
-            $data['sort_order'] = Tandwerk::nextSortOrder();
+            if ($nextSortOrder === null) {
+                $nextSortOrder = Tandwerk::nextSortOrder();
+            }
+            $data['sort_order'] = $nextSortOrder++;
             $ids[(string) $item['tmp']] = Tandwerk::create($data);
         }
 
@@ -226,6 +237,7 @@ class EditorController
     private function saveTeam(array $payload): array
     {
         $ids = [];
+        $nextSortOrder = null;
 
         foreach ((array) ($payload['create'] ?? []) as $item) {
             if (!is_array($item) || empty($item['tmp'])) {
@@ -241,7 +253,10 @@ class EditorController
             if (trim((string) ($data['name'] ?? '')) === '') {
                 throw new RuntimeException('Naam is verplicht voor een nieuw teamlid.');
             }
-            $data['sort_order'] = TeamMember::nextSortOrder();
+            if ($nextSortOrder === null) {
+                $nextSortOrder = TeamMember::nextSortOrder();
+            }
+            $data['sort_order'] = $nextSortOrder++;
             $ids[(string) $item['tmp']] = TeamMember::create($data);
         }
 

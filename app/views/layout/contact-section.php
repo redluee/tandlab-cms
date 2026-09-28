@@ -15,7 +15,7 @@ $mapUrl = $settings['map_embed_url'] ?? 'https://www.google.com/maps?q=Zandweg+1
                     <dt>Adres</dt>
                     <dd><span <?= edit('setting:address', 'richtext') ?>><?= rich($settings['address'] ?? "Tandlab\nZandweg 196A\n3454 HE De Meern", 'richtext') ?></span></dd>
                     <dt>Telefoonnummer</dt>
-                    <dd><a href="tel:<?= e(preg_replace('/\s+/', '', $settings['phone'] ?? '')) ?>" <?= edit('setting:phone', 'text') ?>><?= rich($settings['phone'] ?? '030-2441135', 'text') ?></a></dd>
+                    <dd><a href="tel:<?= e(preg_replace('/\s+/', '', strip_tags($settings['phone'] ?? ''))) ?>" <?= edit('setting:phone', 'text') ?>><?= rich($settings['phone'] ?? '030-2441135', 'text') ?></a></dd>
                     <dt>E-mailadres</dt>
                     <dd><a href="mailto:<?= e($settings['email'] ?? 'info@tandlab.nl') ?>" <?= edit('setting:email', 'text') ?>><?= rich($settings['email'] ?? 'info@tandlab.nl', 'text') ?></a></dd>
                     <dt>Openingstijden</dt>

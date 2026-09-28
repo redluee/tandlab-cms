@@ -497,6 +497,22 @@
         dragHandle.innerHTML = '&#9776;';
         controls.appendChild(dragHandle);
 
+        var toggleBtn = document.createElement('button');
+        toggleBtn.type = 'button';
+        toggleBtn.className = 'editor-item-btn editor-item-btn--toggle';
+        toggleBtn.innerHTML = '&#128065;';
+        function updateToggleTitle() {
+            toggleBtn.title = item.classList.contains('is-inactive') ? 'Tonen' : 'Verbergen';
+        }
+        updateToggleTitle();
+        toggleBtn.addEventListener('click', function (event) {
+            event.stopPropagation();
+            item.classList.toggle('is-inactive');
+            updateToggleTitle();
+            markFieldChange(kind, item.dataset.id, 'active', item.classList.contains('is-inactive') ? 0 : 1);
+        });
+        controls.appendChild(toggleBtn);
+
         var deleteBtn = document.createElement('button');
         deleteBtn.type = 'button';
         deleteBtn.className = 'editor-item-btn editor-item-btn--danger';

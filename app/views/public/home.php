@@ -9,12 +9,18 @@ $heroSlides = json_decode($settings['hero_slides'] ?? '[]', true);
 if (!is_array($heroSlides) || empty($heroSlides)) {
     $heroSlides = array_filter([$settings['hero_slide_1'] ?? '', $settings['hero_slide_2'] ?? '']);
 }
-$heroSlide = array_values($heroSlides)[0] ?? '';
+$heroSlides = array_values($heroSlides);
+$heroInterval = (int) ($settings['hero_interval'] ?? 6);
+if ($heroInterval < 2 || $heroInterval > 30) {
+    $heroInterval = 6;
+}
 
 ob_start();
 ?>
-<section class="hero" <?= edit('setting:hero_slides', 'slides') ?>>
-    <div class="hero__slide is-active" style="background-image:url('/uploads/<?= e($heroSlide) ?>')"></div>
+<section class="hero" data-interval="<?= e((string) ($heroInterval * 1000)) ?>" <?= edit('setting:hero_slides', 'slides') ?>>
+    <?php foreach ($heroSlides as $index => $slide): ?>
+        <div class="hero__slide<?= $index === 0 ? ' is-active' : '' ?>" style="background-image:url('/uploads/<?= e($slide) ?>')"></div>
+    <?php endforeach; ?>
     <div class="hero__overlay"></div>
     <div class="hero__shapes" aria-hidden="true">
         <span class="hero__shape hero__shape--hourglass"></span>

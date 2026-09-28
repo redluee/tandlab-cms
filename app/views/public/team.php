@@ -21,7 +21,7 @@ ob_start();
             <?php foreach ($members as $member): ?>
                 <?php $ref = 'team:' . (int) $member['id']; ?>
                 <div class="team-card<?= $editing && empty($member['active']) ? ' is-inactive' : '' ?>"<?= $editing ? ' data-edit-item="' . e($ref) . '" data-id="' . (int) $member['id'] . '"' : '' ?>>
-                    <img src="/uploads/<?= e($member['photo_path'] ?? '') ?>" alt="<?= e($member['name']) ?>" <?= edit($ref . ':photo_path', 'image') ?>>
+                    <img src="/uploads/<?= e($member['photo_path'] ?? '') ?>" alt="<?= e(strip_tags($member['name'])) ?>" <?= edit($ref . ':photo_path', 'image') ?>>
                     <h3 <?= edit($ref . ':name', 'text') ?>><?= rich($member['name'], 'text') ?></h3>
                     <?php if ($editing || !empty($member['role'])): ?>
                         <p class="role" <?= edit($ref . ':role', 'text') ?>><?= rich($member['role'] ?? '', 'text') ?></p>
