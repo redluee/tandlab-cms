@@ -1,6 +1,6 @@
 <?php
 /** @var array $settings */
-$mapUrl = $settings['map_embed_url'] ?? 'https://www.google.com/maps?q=Zandweg+196A+3454+HE+De+Meern&output=embed';
+$mapUrl = $settings['map_embed_url'] ?? 'https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d2450.519494196115!2d5.081752!3d52.106676!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c66fa1119f7919%3A0x328aa4c0c6a019dd!2sMarc+Vernooij+Tandtechniek+B.V.!5e0!3m2!1sen!2snl!4v1426084467094';
 ?>
 <section id="contact" class="section contact-section">
     <div class="container">
