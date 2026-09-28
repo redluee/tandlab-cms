@@ -29,7 +29,7 @@ $navItems = [
                     <?= e($item['label']) ?>
                 </a>
             <?php endforeach; ?>
-            <a href="/admin/logout">Uitloggen</a>
+            <a href="/admin/logout" class="admin-logout">Uitloggen</a>
         </nav>
     </aside>
     <main class="admin-main">

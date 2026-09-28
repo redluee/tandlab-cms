@@ -56,6 +56,15 @@ $router->post('/admin/instellingen', function () use ($requireAuth, $admin) {
     $admin->settingsSave();
 });
 
+$router->post('/admin/instellingen/privacy/herstellen', function () use ($requireAuth, $admin) {
+    $requireAuth();
+    $admin->privacyRestore();
+});
+$router->get('/admin/instellingen/privacy/{version}', function (array $params) use ($requireAuth, $admin) {
+    $requireAuth();
+    $admin->privacyDownload($params);
+});
+
 $router->get('/admin/afbeeldingen', function () use ($requireAuth, $admin) {
     $requireAuth();
     $admin->mediaIndex();

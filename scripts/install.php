@@ -5,6 +5,7 @@ declare(strict_types=1);
 require __DIR__ . '/../app/bootstrap.php';
 
 use App\Db\Database;
+use App\Models\Image;
 use App\Models\Setting;
 use App\Models\Tandwerk;
 use App\Models\TeamMember;
@@ -125,9 +126,7 @@ $defaults = [
     'email' => 'info@tandlab.nl',
     'email_recipients' => 'info@tandlab.nl',
     'opening_hours' => "MA t/m DO: 8.00 – 12.30. 13.00 - 16.45 uur.\nVR: 8.00 t/m 13.00 uur",
-    'map_embed_url' => 'https://www.google.com/maps?q=Zandweg+196A+3454+HE+De+Meern&output=embed',
-    'privacy_url' => '/assets/docs/privacystatement.pdf',
-    'scan_instructions' => 'Neem contact met ons op voor de scan-instructies voor tandartsen.',
+    'map_embed_url' => 'https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d2450.519494196115!2d5.081752!3d52.106676!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47c66fa1119f7919%3A0x328aa4c0c6a019dd!2sMarc+Vernooij+Tandtechniek+B.V.!5e0!3m2!1sen!2snl!4v1426084467094',
     'hero_kicker' => 'Tandlab',
     'hero_title' => 'UW SPECIALIST IN KROON- EN BRUGWERK',
     'hero_intro' => 'Sinds 1985 vervaardigen wij hoogwaardig kroon- en brugwerk. Als erkend leerbedrijf combineert ons vaste team jarenlange ervaring met actuele technieken om passende werkstukken voor uw praktijk of gebit te leveren.',
@@ -164,6 +163,31 @@ if (User::findByUsername($username ?? 'admin') === null) {
 } else {
     echo "Admin-gebruiker '{$username}' bestaat al, overslaan.\n";
 }
+
+// 7. Mediabibliotheek: geseede/bestaande uploads registreren (alleen ontbrekende rijen)
+$labels = [];
+foreach ($pdo->query('SELECT image_path, title FROM tandwerk') as $row) {
+    $labels[$row['image_path']] = $row['title'];
+}
+foreach ($pdo->query('SELECT photo_path, name FROM team_members') as $row) {
+    $labels[$row['photo_path']] = $row['name'];
+}
+foreach (Setting::all() as $key => $value) {
+    if (preg_match('/^hero_slide_(\d+)$/', $key, $m) && $value !== '') {
+        $labels[$value] = 'Hero slide ' . $m[1];
+    }
+}
+
+$registered = 0;
+foreach (glob($config['uploads']['path'] . '/*.webp') ?: [] as $file) {
+    $name = basename($file);
+    if (in_array($name, ['logo.webp', 'bghero.webp'], true) || Image::findByFilename($name) !== null) {
+        continue;
+    }
+    Image::create($name, $labels[$name] ?? pathinfo($name, PATHINFO_FILENAME));
+    $registered++;
+}
+echo "Mediabibliotheek: {$registered} afbeelding(en) geregistreerd.\n";
 
 echo "Klaar.\n";
 

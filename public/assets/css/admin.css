@@ -61,6 +61,11 @@ a {
     font-weight: 600;
 }
 
+.admin-sidebar nav a.admin-logout:hover {
+    background: rgba(220, 53, 69, 0.15);
+    color: #ff6b6b;
+}
+
 .admin-sidebar .badge {
     background: var(--admin-green);
     color: #16321f;
@@ -349,4 +354,77 @@ textarea {
     .admin-sidebar nav {
         display: flex;
     }
+}
+
+.file-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.file-row input[type="file"] {
+    width: auto;
+    flex: 1 1 200px;
+}
+
+.icon-link {
+    display: inline-flex;
+    vertical-align: middle;
+    color: var(--admin-green-dark);
+}
+
+.btn--link {
+    background: none;
+    color: var(--admin-green-dark);
+    padding: 0;
+    border: 0;
+    text-decoration: underline;
+}
+
+.btn--link:hover {
+    background: none;
+    color: var(--admin-gray-900);
+}
+
+.btn--icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.file-row [hidden] {
+    display: none;
+}
+
+.btn:disabled {
+    background: var(--admin-gray-200);
+    color: var(--admin-gray-700);
+    cursor: not-allowed;
+    opacity: .7;
+}
+
+.btn:disabled:hover {
+    background: var(--admin-gray-200);
+    color: var(--admin-gray-700);
+}
+
+input.is-changed {
+    border-color: var(--admin-green-dark);
+    background: #f1f9f5;
+}
+
+.change-note {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--admin-gray-700);
+    word-break: break-all;
+}
+
+.change-note strong {
+    color: var(--admin-green-dark);
+}
+
+.change-note .btn--link {
+    font-size: inherit;
 }

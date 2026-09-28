@@ -59,7 +59,7 @@ Tandlab-CMS/
 Portable DDL, geen MySQL-only backticks; `AUTOINCREMENT` is de enige driver-afwijking (in schema per driver).
 
 - **users**: `id, username UNIQUE, password_hash, created_at`
-- **site_settings**: `key PK, value TEXT` → adres (3 regels), telefoon, e-mail, ontvangers, openingstijden, map-embed-URL, privacy-url, scan-instructietekst, nav-labels, footer-tekst, hero titel/subtitels/intro/USP's, hero slide 1/2
+- **site_settings**: `key PK, value TEXT` → adres (3 regels), telefoon, e-mail, ontvangers, openingstijden, map-embed-URL, privacy-url, nav-labels, footer-tekst, hero titel/subtitels/intro/USP's, hero slide 1/2
 - **tandwerk**: `id, title, body, image_path, alt, sort_order, active`
 - **team_members**: `id, name, role, bio, photo_path, sort_order, active`
 - **messages**: `id, name, email, phone, subject, body, is_read, created_at`
@@ -95,7 +95,7 @@ Data komt uit `tandwerk` (geseede als Laboratorium, Samenwerking, Behandelkamer,
 **Footer**: linkerhelft contactinfo (adres, telefoon, e-mail, openingstijden), rechterhelft ge-embedde Google Map op adres van Tandlab.
 
 ## 7. Contactsectie (alle pagina's) + formulier
-- Blok: adres, telefoon, e-mail, openingstijden, privacy-statement-link, scan-instructies voor tandartsen, embedded map.
+- Blok: adres, telefoon, e-mail, openingstijden, privacy-statement-link, embedded map.
 - Formuliervelden: naam, e-mail, telefoon (optioneel), onderwerp (vraag / order / scan aanleveren), bericht.
 - Bescherming: CSRF-token, honeypot-veld, basis-sanitatie/validatie, `htmlspecialchars` output.
 - Opslag in `messages` + optionele e-mailnotificatie (`Mailer`) naar ontvangers uit instellingen.
@@ -105,7 +105,7 @@ Data komt uit `tandwerk` (geseede als Laboratorium, Samenwerking, Behandelkamer,
 - **Pagina's/Home**: hero titel, subtitel(s), intro, USP's, hero-slide-afbeeldingen droppen.
 - **Tand**: werkstukken CRUD (titel, omschrijving, foto, volgorde, actief) → stuurt de 2×3 grid.
 - **Team**: leden CRUD (naam, functie, bio, foto-upload, volgorde, actief).
-- **Instellingen**: NAW, telefoon, e-mail + ontvangers, openingstijden, map-URL, privacy-url, scan-instructies.
+- **Instellingen**: NAW, telefoon, e-mail + ontvangers, openingstijden, map-URL, privacy-url.
 - **Berichten**: inbox (lees/ongelezen, verwijderen).
 - **Afbeeldingen**: uploader met voorvertoning en automatische optimalisatie (§9).
 

@@ -10,6 +10,7 @@ use App\Models\Tandwerk;
 use App\Models\TeamMember;
 use App\Services\Csrf;
 use App\Services\ImageService;
+use App\Services\PrivacyStatement;
 use RuntimeException;
 
 class AdminController
@@ -39,7 +40,7 @@ class AdminController
     {
         $this->assertCsrf();
 
-        $fields = ['email_recipients', 'map_embed_url', 'privacy_url', 'scan_instructions'];
+        $fields = ['email_recipients', 'map_embed_url'];
 
         $data = [];
         foreach ($fields as $field) {
@@ -48,8 +49,49 @@ class AdminController
 
         Setting::setMany($data);
 
+        if (!empty($_FILES['privacy_pdf']['name'])) {
+            try {
+                PrivacyStatement::replace($_FILES['privacy_pdf']);
+                $_SESSION['admin_success'] = 'Instellingen opgeslagen. Privacy statement vervangen; de vorige versie is bewaard.';
+            } catch (RuntimeException $e) {
+                $_SESSION['admin_error'] = $e->getMessage();
+            }
+        }
+
         header('Location: /admin/instellingen');
         exit;
+    }
+
+    public function privacyRestore(): void
+    {
+        $this->assertCsrf();
+
+        try {
+            PrivacyStatement::restorePrevious();
+            $_SESSION['admin_success'] = 'Vorige versie hersteld. De vervangen versie is nu de "vorige".';
+        } catch (RuntimeException $e) {
+            $_SESSION['admin_error'] = $e->getMessage();
+        }
+
+        header('Location: /admin/instellingen');
+        exit;
+    }
+
+    public function privacyDownload(array $params): void
+    {
+        $path = PrivacyStatement::pathFor((string) ($params['version'] ?? ''));
+        if ($path === null) {
+            http_response_code(404);
+            echo 'Bestand niet gevonden.';
+            return;
+        }
+
+        $download = isset($_GET['download']);
+        header('Content-Type: application/pdf');
+        header('Content-Length: ' . filesize($path));
+        header('Content-Disposition: ' . ($download ? 'attachment' : 'inline') . '; filename="privacystatement-' . $params['version'] . '.pdf"');
+        header('X-Content-Type-Options: nosniff');
+        readfile($path);
     }
 
     // --- Afbeeldingen ---
@@ -60,13 +102,7 @@ class AdminController
         $pageTitle = 'Afbeeldingen - TANDLAB CMS';
         $images = Image::all();
 
-        $usage = [];
-        foreach ($images as $image) {
-            $usedBy = Tandwerk::findByImagePath($image['filename']);
-            if (!empty($usedBy)) {
-                $usage[$image['filename']] = array_map(fn ($t) => $t['title'], $usedBy);
-            }
-        }
+        $usage = Image::pageUsage();
 
         require __DIR__ . '/../views/admin/media.php';
     }
