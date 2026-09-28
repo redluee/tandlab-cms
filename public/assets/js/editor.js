@@ -92,11 +92,15 @@
     }
 
     function updateChangeCount() {
+        var n = countChanges();
+        var saveButton = document.getElementById('editor-save');
+        if (saveButton) {
+            saveButton.disabled = n === 0;
+        }
         var el = document.getElementById('editor-change-count');
         if (!el) {
             return;
         }
-        var n = countChanges();
         el.textContent = n + ' wijziging' + (n === 1 ? '' : 'en');
     }
 
@@ -640,6 +644,9 @@
     }
 
     function saveChanges() {
+        if (!hasChanges()) {
+            return;
+        }
         var payload = buildPayload();
         fetch('/admin/bewerken/opslaan', {
             method: 'POST',
@@ -720,4 +727,31 @@
     }
 
     window.addEventListener('beforeunload', beforeUnloadHandler);
+
+    document.addEventListener('click', function (event) {
+        var link = event.target.closest ? event.target.closest('a[href]') : null;
+        if (!link || !hasChanges()) {
+            return;
+        }
+        var href = link.getAttribute('href');
+        if (href.charAt(0) === '#' || link.target === '_blank' || href.indexOf('javascript:') === 0) {
+            return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        TandlabDialog.confirm({
+            title: 'Niet-opgeslagen wijzigingen',
+            message: 'Je hebt niet-opgeslagen wijzigingen. Weet je zeker dat je deze pagina wilt verlaten?',
+            okLabel: 'Pagina verlaten',
+            cancelLabel: 'Blijven',
+            danger: true
+        }).then(function (ok) {
+            if (ok) {
+                window.removeEventListener('beforeunload', beforeUnloadHandler);
+                window.location.href = link.href;
+            }
+        });
+    }, true);
+
+    updateChangeCount();
 })();

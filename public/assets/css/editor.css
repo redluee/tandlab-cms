@@ -77,6 +77,16 @@ body.is-editing .site-nav {
     color: #fff;
 }
 
+.editor-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.editor-btn:disabled:hover {
+    background: var(--color-green, #78c39c);
+    color: #16321f;
+}
+
 .editor-btn--secondary {
     background: transparent;
     color: #cfd3d6;
@@ -288,6 +298,16 @@ template {
 
 .editor-image-menu__panel button:hover {
     background: var(--color-gray-100, #f4f5f6);
+}
+
+.editor-modal__content .editor-btn--secondary {
+    color: var(--color-gray-900, #23272a);
+    border-color: #c9cdd1;
+}
+
+.editor-modal__content .editor-btn--secondary:hover {
+    background: var(--color-gray-100, #f4f5f6);
+    color: var(--color-gray-900, #23272a);
 }
 
 .editor-modal__content {
