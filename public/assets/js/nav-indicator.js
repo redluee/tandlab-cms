@@ -21,19 +21,28 @@
     );
 
     function positionOf(link) {
-        return { left: link.offsetLeft, width: link.offsetWidth };
+        return {
+            left: link.offsetLeft,
+            width: link.offsetWidth,
+            top: link.offsetTop,
+            height: link.offsetHeight
+        };
     }
 
     function place(pos, animate) {
         indicator.style.transition = animate ? '' : 'none';
         indicator.style.width = pos.width + 'px';
         indicator.style.left = pos.left + 'px';
+        indicator.style.top = (pos.top || 0) + 'px';
+        indicator.style.height = pos.height ? pos.height + 'px' : '';
     }
 
     function releaseToAnchor(animate) {
         indicator.style.transition = animate ? '' : 'none';
         indicator.style.width = '';
         indicator.style.left = '';
+        indicator.style.top = '';
+        indicator.style.height = '';
     }
 
     var active = list.querySelector('a.active');

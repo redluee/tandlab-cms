@@ -25,6 +25,11 @@ if (!function_exists('cfg_env')) {
 
 $driver = cfg_env($ini, 'DB_DRIVER', 'sqlite');
 
+$uploadsPath = cfg_env($ini, 'UPLOADS_PATH', 'storage/uploads');
+if ($uploadsPath[0] !== '/') {
+    $uploadsPath = $root . '/' . $uploadsPath;
+}
+
 return [
     'app' => [
         'root' => $root,
@@ -40,7 +45,7 @@ return [
         'charset' => cfg_env($ini, 'DB_CHARSET', 'utf8mb4'),
     ],
     'uploads' => [
-        'path' => $root . '/storage/uploads',
+        'path' => $uploadsPath,
         'url' => '/uploads',
     ],
 ];
