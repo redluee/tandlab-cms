@@ -26,6 +26,7 @@ $schemaFile = Database::driver() === 'mysql'
 $sql = file_get_contents($schemaFile);
 $pdo->exec($sql);
 echo "Schema toegepast.\n";
+\App\Db\TeamCardColorMigration::up($pdo);
 
 // 2. Branding assets (logo, bgHero) — gitignored, so they must be generated on every server.
 $uploadsDir = $config['uploads']['path'];

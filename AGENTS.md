@@ -27,7 +27,7 @@ Content van Home, Tand en Team wordt beheerd via een inline visuele editor (`/ad
 ```bash
 php scripts/install.php --user=admin --password=...   # schema + seed + admin-user (idempotent, wachtwoord min. 12 tekens)
 php scripts/backup.php                                 # DB-dump + tar.gz van uploads/privacy naar storage/backups
-php -S localhost:8000 -t public public/router.php      # lokale dev-server
+php -S localhost:8000 -t public                       # lokale dev-server (PHP-uploadconfiguratie: zie README)
 composer install                                       # dev-dependencies + pre-commit hook installeren
 composer check                                          # lint (phpcs) + static analysis (phpstan) + tests (phpunit)
 composer lint                                           # alleen phpcs

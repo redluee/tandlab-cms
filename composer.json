@@ -18,6 +18,7 @@
         }
     },
     "scripts": {
+        "serve": "@php scripts/serve.php",
         "lint": "phpcs",
         "stan": "phpstan analyse --memory-limit=512M",
         "test": "phpunit",

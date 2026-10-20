@@ -8,16 +8,47 @@ use RuntimeException;
 
 class ImageService
 {
-    private const MAX_BYTES = 8 * 1024 * 1024;
+    private const MAX_BYTES = 50 * 1024 * 1024;
     private const ALLOWED_MIME = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
+    public static function maxUploadBytes(): int
+    {
+        $limits = [self::MAX_BYTES];
+        $uploadLimit = ini_parse_quantity((string) ini_get('upload_max_filesize'));
+        $postLimit = ini_parse_quantity((string) ini_get('post_max_size'));
+        if ($uploadLimit > 0) {
+            $limits[] = $uploadLimit;
+        }
+        if ($postLimit > 0) {
+            $limits[] = max(0, $postLimit - 64 * 1024);
+        }
+        return min($limits);
+    }
+
+    public static function uploadLimitMessage(): string
+    {
+        $megabytes = floor(self::maxUploadBytes() / 1024 / 1024 * 10) / 10;
+        return 'Bestand is te groot. Upload een afbeelding van maximaal '
+            . str_replace('.', ',', (string) $megabytes) . ' MB.';
+    }
 
     public static function storeUpload(array $file, string $subdir = '', int $maxWidth = 1600): string
     {
+        $error = $file['error'] ?? UPLOAD_ERR_OK;
+        if (in_array($error, [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE], true)) {
+            throw new RuntimeException(self::uploadLimitMessage());
+        }
+        if ($error === UPLOAD_ERR_NO_FILE) {
+            throw new RuntimeException('Geen bestand geselecteerd.');
+        }
+        if ($error !== UPLOAD_ERR_OK) {
+            throw new RuntimeException('Uploaden is mislukt. Probeer het opnieuw.');
+        }
         if (!isset($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
             throw new RuntimeException('Ongeldige upload.');
         }
-        if (($file['size'] ?? 0) > self::MAX_BYTES) {
-            throw new RuntimeException('Bestand is te groot.');
+        if (($file['size'] ?? 0) > self::maxUploadBytes()) {
+            throw new RuntimeException(self::uploadLimitMessage());
         }
 
         $mime = mime_content_type($file['tmp_name']);

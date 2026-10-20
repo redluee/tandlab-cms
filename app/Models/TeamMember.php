@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Db\Database;
+use App\Services\TeamCardColor;
 
 class TeamMember
 {
@@ -35,7 +36,7 @@ class TeamMember
     {
         $pdo = Database::connect(config_get()['db']);
         $stmt = $pdo->prepare(
-            'INSERT INTO team_members (name, role, bio, photo_path, sort_order, active) VALUES (?, ?, ?, ?, ?, ?)'
+            'INSERT INTO team_members (name, role, bio, photo_path, sort_order, active, card_color) VALUES (?, ?, ?, ?, ?, ?, ?)'
         );
         $stmt->execute([
             $data['name'],
@@ -44,6 +45,7 @@ class TeamMember
             $data['photo_path'] ?? null,
             $data['sort_order'] ?? self::nextSortOrder(),
             $data['active'] ?? 1,
+            TeamCardColor::validate($data['card_color'] ?? TeamCardColor::random()),
         ]);
         return (int) $pdo->lastInsertId();
     }
@@ -96,10 +98,13 @@ class TeamMember
         }
     }
 
-    private const WHITELISTED_FIELDS = ['name', 'role', 'bio', 'photo_path', 'active'];
+    private const WHITELISTED_FIELDS = ['name', 'role', 'bio', 'photo_path', 'active', 'card_color'];
 
     public static function updateFields(int $id, array $fields): void
     {
+        if (array_key_exists('card_color', $fields)) {
+            $fields['card_color'] = TeamCardColor::validate($fields['card_color']);
+        }
         $set = [];
         $params = [];
         foreach (self::WHITELISTED_FIELDS as $field) {

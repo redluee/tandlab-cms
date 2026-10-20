@@ -46,6 +46,7 @@ $ogImage = $siteUrl . '/uploads/' . ($ogImageFile !== '' ? $ogImageFile : 'logo.
     <link rel="stylesheet" href="/assets/css/style.css">
     <?php if ($editing): ?>
     <meta name="robots" content="noindex, nofollow">
+    <meta name="image-upload-max-bytes" content="<?= \App\Services\ImageService::maxUploadBytes() ?>">
     <meta name="csrf-token" content="<?= e(\App\Services\Csrf::token()) ?>">
     <link rel="stylesheet" href="/assets/css/editor.css">
     <link rel="stylesheet" href="/assets/css/dialog.css">

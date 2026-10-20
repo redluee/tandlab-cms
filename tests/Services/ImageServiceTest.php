@@ -6,6 +6,7 @@ namespace Tests\Services;
 
 use App\Services\ImageService;
 use PHPUnit\Framework\Attributes\After;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -68,6 +69,28 @@ final class ImageServiceTest extends TestCase
         } finally {
             unlink($source);
         }
+    }
+
+    public static function uploadErrors(): array
+    {
+        return [
+            'php size limit' => [UPLOAD_ERR_INI_SIZE, 'Bestand is te groot.'],
+            'form size limit' => [UPLOAD_ERR_FORM_SIZE, 'Bestand is te groot.'],
+            'partial upload' => [UPLOAD_ERR_PARTIAL, 'Uploaden is mislukt.'],
+            'no file' => [UPLOAD_ERR_NO_FILE, 'Geen bestand geselecteerd.'],
+            'missing temporary directory' => [UPLOAD_ERR_NO_TMP_DIR, 'Uploaden is mislukt.'],
+            'write failure' => [UPLOAD_ERR_CANT_WRITE, 'Uploaden is mislukt.'],
+            'extension stopped upload' => [UPLOAD_ERR_EXTENSION, 'Uploaden is mislukt.'],
+        ];
+    }
+
+    #[DataProvider('uploadErrors')]
+    public function testUploadErrorsAreReportedBeforeInspectingTemporaryFile(int $error, string $message): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage($message);
+
+        ImageService::storeUpload(['error' => $error, 'tmp_name' => '', 'size' => 0]);
     }
 
     private function createPngFixture(int $width, int $height): string

@@ -468,3 +468,27 @@ template {
 .media-picker-upload:hover {
     background: rgba(120, 195, 156, 0.1);
 }
+
+.editor-card-color {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: #23272a;
+    color: #fff;
+    font-size: 0.8rem;
+}
+
+.editor-card-color select {
+    border: 1px solid #808080;
+    border-radius: 4px;
+    background: #fff;
+    color: #23272a;
+    font: inherit;
+    padding: 3px;
+}
+
+body.is-editing .team-card {
+    padding-top: 56px;
+}

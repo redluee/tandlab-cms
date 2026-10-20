@@ -187,11 +187,13 @@ unset($_SESSION['admin_error']);
 <?php endif; ?>
 <div class="card">
     <h2 style="margin-top:0">Uploaden</h2>
-    <form method="post" action="/admin/afbeeldingen/upload" enctype="multipart/form-data" style="display:flex; gap:12px; align-items:center">
+    <p>JPEG, PNG, WebP of GIF. Maximaal <?= e(str_replace('.', ',', (string) (floor(\App\Services\ImageService::maxUploadBytes() / 1024 / 1024 * 10) / 10))) ?> MB per afbeelding.</p>
+    <form id="media-upload-form" method="post" action="/admin/afbeeldingen/upload" enctype="multipart/form-data" style="display:flex; gap:12px; align-items:center">
         <input type="hidden" name="csrf_token" value="<?= e(\App\Services\Csrf::token()) ?>">
-        <input type="file" name="file" accept="image/*" required>
+        <input type="file" name="file" accept="image/jpeg,image/png,image/webp,image/gif" aria-label="Afbeelding uploaden" required>
         <button type="submit" class="btn">Uploaden &amp; optimaliseren</button>
     </form>
+    <p id="media-upload-error" role="alert"></p>
 </div>
 <div class="card">
     <h2 style="margin-top:0">Mediabibliotheek</h2>
@@ -252,6 +254,16 @@ unset($_SESSION['admin_error']);
 </div>
 
 <script>
+    document.getElementById('media-upload-form').addEventListener('submit', function (event) {
+        var file = this.elements.file.files[0];
+        var error = document.getElementById('media-upload-error');
+        error.textContent = '';
+        if (file && file.size > <?= \App\Services\ImageService::maxUploadBytes() ?>) {
+            event.preventDefault();
+            error.textContent = <?= json_encode(\App\Services\ImageService::uploadLimitMessage()) ?>;
+        }
+    });
+
     function confirmDelete(event, usedByTitles) {
         const form = event.target;
         if (form.dataset.confirmed) {

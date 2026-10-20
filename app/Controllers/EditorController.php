@@ -12,6 +12,7 @@ use App\Models\TeamMember;
 use App\Services\Csrf;
 use App\Services\EditMode;
 use App\Services\HtmlSanitizer;
+use App\Services\TeamCardColor;
 use RuntimeException;
 
 class EditorController
@@ -247,6 +248,9 @@ class EditorController
             if (array_key_exists('photo_path', $item)) {
                 $data['photo_path'] = $this->cleanImageField($item['photo_path']);
             }
+            if (array_key_exists('card_color', $item)) {
+                $data['card_color'] = TeamCardColor::validate($item['card_color']);
+            }
             if (array_key_exists('active', $item)) {
                 $data['active'] = !empty($item['active']) ? 1 : 0;
             }
@@ -268,6 +272,9 @@ class EditorController
             $data = $this->cleanFields($fields, self::TEAM_TEXT_FIELDS);
             if (array_key_exists('photo_path', $fields)) {
                 $data['photo_path'] = $this->cleanImageField($fields['photo_path']);
+            }
+            if (array_key_exists('card_color', $fields)) {
+                $data['card_color'] = TeamCardColor::validate($fields['card_color']);
             }
             if (array_key_exists('active', $fields)) {
                 $data['active'] = !empty($fields['active']) ? 1 : 0;

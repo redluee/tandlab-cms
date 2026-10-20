@@ -124,9 +124,16 @@ class AdminController
 
     public function mediaUpload(): void
     {
-        $this->assertCsrf();
-
         $isAjax = ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest';
+        $postLimit = ini_parse_quantity((string) ini_get('post_max_size'));
+        if ($postLimit > 0 && (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > $postLimit) {
+            $this->mediaUploadError(ImageService::uploadLimitMessage(), $isAjax, 413);
+            return;
+        }
+        if (!Csrf::validate($_POST['csrf_token'] ?? null)) {
+            $this->mediaUploadError('Ongeldig verzoek (CSRF). Vernieuw de pagina en probeer opnieuw.', $isAjax, 403);
+            return;
+        }
 
         if (!empty($_FILES['file']['name'])) {
             try {
@@ -144,24 +151,29 @@ class AdminController
                     return;
                 }
             } catch (RuntimeException $e) {
-                $_SESSION['admin_error'] = $e->getMessage();
-
-                if ($isAjax) {
-                    header('Content-Type: application/json');
-                    http_response_code(422);
-                    echo json_encode(['ok' => false, 'error' => $e->getMessage()]);
-                    return;
-                }
+                $this->mediaUploadError($e->getMessage(), $isAjax, 422);
+                return;
             }
-        } elseif ($isAjax) {
-            header('Content-Type: application/json');
-            http_response_code(422);
-            echo json_encode(['ok' => false, 'error' => 'Geen bestand geselecteerd.']);
+        } else {
+            $this->mediaUploadError('Geen bestand geselecteerd.', $isAjax, 422);
             return;
         }
 
         header('Location: /admin/afbeeldingen');
         exit;
+    }
+
+    private function mediaUploadError(string $message, bool $isAjax, int $status): void
+    {
+        if ($isAjax) {
+            header('Content-Type: application/json');
+            http_response_code($status);
+            echo json_encode(['ok' => false, 'error' => $message]);
+            return;
+        }
+
+        $_SESSION['admin_error'] = $message;
+        header('Location: /admin/afbeeldingen', true, 303);
     }
 
     public function mediaDelete(): void

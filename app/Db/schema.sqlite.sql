@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS team_members (
     name TEXT NOT NULL,
     role TEXT,
     bio TEXT,
+    card_color VARCHAR(5),
     photo_path TEXT,
     sort_order INTEGER NOT NULL DEFAULT 0,
     active INTEGER NOT NULL DEFAULT 1

@@ -18,7 +18,7 @@
                     '<input type="file" accept="image/*" id="media-picker-upload" style="display:none">' +
                     'Nieuwe afbeelding uploaden' +
                 '</label>' +
-                '<p><span id="media-picker-status"></span></p>' +
+                '<p><span id="media-picker-status" role="status" aria-live="polite"></span></p>' +
                 '<div class="media-picker-grid" id="media-picker-grid"></div>' +
                 '<div style="text-align:right;margin-top:16px">' +
                     '<button type="button" class="editor-btn editor-btn--secondary" id="media-picker-cancel">Annuleren</button>' +
@@ -38,6 +38,15 @@
                 return;
             }
             var status = el.querySelector('#media-picker-status');
+            var limit = document.querySelector('meta[name="image-upload-max-bytes"]');
+            var maxBytes = limit ? Number(limit.content) : 0;
+            if (maxBytes > 0 && file.size > maxBytes) {
+                var megabytes = Math.floor(maxBytes / 1024 / 1024 * 10) / 10;
+                status.textContent = 'Bestand is te groot. Upload een afbeelding van maximaal ' +
+                    String(megabytes).replace('.', ',') + ' MB.';
+                event.target.value = '';
+                return;
+            }
             status.textContent = 'Uploaden...';
             var formData = new FormData();
             formData.append('file', file);
@@ -47,7 +56,13 @@
                 body: formData,
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             })
-                .then(function (response) { return response.json(); })
+                .then(function (response) {
+                    return response.json().catch(function () {
+                        throw new Error(response.status === 413 ?
+                            'Bestand is te groot voor de server. Kies een kleinere afbeelding.' :
+                            'Uploaden mislukt. Vernieuw de pagina en probeer opnieuw.');
+                    });
+                })
                 .then(function (data) {
                     if (data.ok) {
                         status.textContent = '';
@@ -56,8 +71,8 @@
                         status.textContent = data.error || 'Uploaden mislukt.';
                     }
                 })
-                .catch(function () {
-                    status.textContent = 'Uploaden mislukt.';
+                .catch(function (error) {
+                    status.textContent = error.message || 'Uploaden mislukt.';
                 })
                 .finally(function () {
                     event.target.value = '';

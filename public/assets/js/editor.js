@@ -553,6 +553,32 @@
         });
         controls.appendChild(deleteBtn);
 
+        if (kind === 'team') {
+            var colors = ['white', 'grey', 'green'];
+            if (!item.dataset.cardColor) {
+                item.dataset.cardColor = colors[Math.floor(Math.random() * colors.length)];
+                markFieldChange(kind, item.dataset.id, 'card_color', item.dataset.cardColor);
+            }
+            var colorLabel = document.createElement('label');
+            colorLabel.className = 'editor-card-color';
+            colorLabel.textContent = 'Kaartkleur';
+            var colorSelect = document.createElement('select');
+            var labels = ['Wit', 'Grijs', 'Groen'];
+            colors.forEach(function (color, index) {
+                var option = document.createElement('option');
+                option.value = color;
+                option.textContent = labels[index];
+                colorSelect.appendChild(option);
+            });
+            colorSelect.value = item.dataset.cardColor;
+            colorSelect.addEventListener('change', function () {
+                item.dataset.cardColor = colorSelect.value;
+                markFieldChange(kind, item.dataset.id, 'card_color', colorSelect.value);
+            });
+            colorLabel.appendChild(colorSelect);
+            controls.appendChild(colorLabel);
+        }
+
         var anchor = item.querySelector('.tand-grid__cell--image') || item;
         anchor.appendChild(controls);
 
@@ -716,6 +742,24 @@
 
     document.querySelectorAll('[data-edit-list]').forEach(setupSortableList);
     document.querySelectorAll('[data-add-item]').forEach(setupAddItemButton);
+
+    var diagonalColorsButton = document.getElementById('team-diagonal-colors');
+    if (diagonalColorsButton) {
+        diagonalColorsButton.addEventListener('click', function () {
+            var colors = ['white', 'grey', 'green'];
+            document.querySelectorAll('#team-grid > .team-card:not(.is-inactive)').forEach(function (item, index) {
+                var column = index % 3;
+                var row = Math.floor(index / 3);
+                var color = colors[((column - row) % 3 + 3) % 3];
+                if (item.dataset.cardColor === color) {
+                    return;
+                }
+                item.dataset.cardColor = color;
+                item.querySelector('.editor-card-color select').value = color;
+                markFieldChange('team', item.dataset.id, 'card_color', color);
+            });
+        });
+    }
 
     var saveBtn = document.getElementById('editor-save');
     var cancelBtn = document.getElementById('editor-cancel');

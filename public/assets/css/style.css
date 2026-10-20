@@ -6,6 +6,7 @@
     --color-gray-700: #4a4f54;
     --color-gray-500: #808080;
     --color-gray-400: #9aa0a6;
+    --color-gray-200: #d6d6d6;
     --color-gray-100: #f4f5f6;
     --color-white: #ffffff;
     --color-blue: #3b82f6;
@@ -327,7 +328,7 @@ main {
 
 .hero__shape--circle {
     border-radius: 50%;
-    background: var(--color-navy);
+    background: var(--color-white);
 }
 
 .hero__shape--hourglass {
@@ -340,7 +341,7 @@ main {
     display: block;
     width: 71%;
     height: 71%;
-    background: var(--color-green);
+    background: var(--color-white);
     transform: rotate(45deg);
 }
 
@@ -480,6 +481,7 @@ main {
     position: relative;
     overflow: hidden;
     padding: 64px 0;
+    color: var(--color-gray-900);
 }
 
 .tand-bar:nth-child(odd) {
@@ -487,8 +489,11 @@ main {
 }
 
 .tand-bar:nth-child(even) {
-    background: var(--color-navy);
-    color: var(--color-white);
+    background: var(--color-gray-200);
+}
+
+.tand-bar:last-child {
+    background: var(--color-green);
 }
 
 .tand-bar__shape {
@@ -498,14 +503,9 @@ main {
     width: 260px;
     height: 260px;
     transform: translateY(-50%);
-    background: var(--color-green);
-    opacity: 0.14;
+    background: var(--color-white);
     pointer-events: none;
     z-index: 0;
-}
-
-.tand-bar:nth-child(even) .tand-bar__shape {
-    opacity: 0.16;
 }
 
 .tand-bar:nth-child(3n+1) .tand-bar__shape {
@@ -567,19 +567,19 @@ main {
 }
 
 .tand-grid__cell--text h3 {
-    color: var(--color-green-dark);
+    color: var(--color-green);
     margin-top: 0;
 }
 
-.tand-bar:nth-child(even) .tand-grid__cell--text h3 {
-    color: var(--color-green);
+.tand-bar:last-child .tand-grid__cell--text h3 {
+    color: var(--color-gray-900);
 }
 
 /* Page hero (Tand, Team) */
 .page-hero {
     position: relative;
-    background: var(--color-navy);
-    color: var(--color-white);
+    background: var(--color-gray-200);
+    color: var(--color-gray-900);
     padding: 80px 0;
     overflow: hidden;
 }
@@ -589,7 +589,7 @@ main {
     position: absolute;
     inset: 0;
     z-index: 0;
-    background-color: #153a4d;
+    background-color: var(--color-white);
     -webkit-mask-image: url('/assets/img/shapes-pattern.webp');
     mask-image: url('/assets/img/shapes-pattern.webp');
     -webkit-mask-size: 588px 588px;
@@ -617,7 +617,7 @@ main {
     text-align: left;
     margin: 0 0 14px;
     font-size: 2rem;
-    color: var(--color-green);
+    color: var(--color-gray-900);
     animation-delay: 0.05s;
 }
 
@@ -625,7 +625,7 @@ main {
     text-align: left;
     margin: 0;
     max-width: 640px;
-    color: rgba(255, 255, 255, 0.82);
+    color: var(--color-gray-700);
     animation-delay: 0.14s;
 }
 
@@ -648,17 +648,27 @@ main {
     flex-direction: column;
     gap: 16px;
     text-align: left;
+    color: var(--color-gray-900);
     background: var(--color-white);
     border-radius: var(--radius-squircle);
     overflow: hidden;
     padding: 20px;
+    box-shadow: var(--shadow);
     transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
+}
+
+.team-card[data-card-color="grey"] {
+    background: #e5e7e9;
+}
+
+.team-card[data-card-color="green"] {
+    background: var(--color-green);
 }
 
 @media (hover: hover) and (pointer: fine) {
     .team-card:hover {
         transform: translateY(-4px);
-        box-shadow: var(--shadow);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     }
 }
 
@@ -686,9 +696,10 @@ body:not(.is-editing) .team-grid > .team-card:nth-child(n+7) { animation-delay: 
 .team-card img {
     order: -1;
     width: 100%;
+    height: auto;
     aspect-ratio: 1 / 1;
     object-fit: cover;
-    border-radius: calc(var(--radius-squircle) - 6px);
+    border-radius: 50%;
 }
 
 .team-grid > .team-card:nth-child(even) img {
@@ -696,12 +707,13 @@ body:not(.is-editing) .team-grid > .team-card:nth-child(n+7) { animation-delay: 
 }
 
 .team-card h3 {
+    color: var(--color-green);
     margin: 0;
     font-size: 1.2rem;
 }
 
 .team-card .role {
-    color: var(--color-green-dark);
+    color: var(--color-gray-900);
     font-weight: 700;
     font-size: 0.78rem;
     text-transform: uppercase;
@@ -713,6 +725,17 @@ body:not(.is-editing) .team-grid > .team-card:nth-child(n+7) { animation-delay: 
     font-size: 0.92rem;
     color: var(--color-gray-700);
     margin: 0;
+}
+
+.team-card[data-card-color="green"] h3,
+.team-card[data-card-color="green"] .role,
+.team-card[data-card-color="green"] .bio {
+    color: var(--color-gray-900);
+}
+
+.team-card a {
+    color: inherit;
+    text-decoration: underline;
 }
 
 @media (max-width: 640px) {
@@ -777,7 +800,7 @@ body:not(.is-editing) .team-grid > .team-card:nth-child(n+7) { animation-delay: 
 /* Contact */
 .contact-section {
     position: relative;
-    background-color: var(--color-navy);
+    background-color: var(--color-gray-200);
     color: var(--color-gray-900);
     scroll-margin-top: 72px;
     overflow: hidden;
@@ -788,7 +811,7 @@ body:not(.is-editing) .team-grid > .team-card:nth-child(n+7) { animation-delay: 
     position: absolute;
     inset: 0;
     z-index: 0;
-    background-color: #153a4d;
+    background-color: var(--color-white);
     -webkit-mask-image: url('/assets/img/shapes-pattern.webp');
     mask-image: url('/assets/img/shapes-pattern.webp');
     -webkit-mask-size: 588px 588px;
@@ -828,7 +851,7 @@ body:not(.is-editing) .team-grid > .team-card:nth-child(n+7) { animation-delay: 
     font-size: 1.1rem;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--color-white);
+    color: var(--color-gray-900);
 }
 
 .contact-tile {
@@ -861,6 +884,26 @@ body:not(.is-editing) .team-grid > .team-card:nth-child(n+7) { animation-delay: 
     color: var(--color-gray-700);
 }
 
+.contact-info__channel a {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6em;
+}
+
+.contact-info__icon {
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+    align-self: flex-start;
+    margin-top: 0.35em;
+    color: inherit;
+}
+
+.contact-info__channel a > span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
 .contact-info a {
     color: var(--color-green);
     font-weight: 600;
@@ -871,8 +914,8 @@ body:not(.is-editing) .team-grid > .team-card:nth-child(n+7) { animation-delay: 
 
 .contact-info a:hover,
 .contact-info a:focus-visible {
-    color: var(--color-gray-700);
-    text-decoration-color: var(--color-gray-700);
+    color: #000;
+    text-decoration-color: currentColor;
 }
 
 .map-embed {

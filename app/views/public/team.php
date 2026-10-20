@@ -19,8 +19,11 @@ ob_start();
     <div class="container">
         <div class="team-grid" id="team-grid"<?= $editing ? ' data-edit-list="team"' : '' ?>>
             <?php foreach ($members as $member): ?>
-                <?php $ref = 'team:' . (int) $member['id']; ?>
-                <div class="team-card<?= $editing && empty($member['active']) ? ' is-inactive' : '' ?>"<?= $editing ? ' data-edit-item="' . e($ref) . '" data-id="' . (int) $member['id'] . '"' : '' ?>>
+                <?php
+                $ref = 'team:' . (int) $member['id'];
+                $cardColor = \App\Services\TeamCardColor::validate($member['card_color'] ?? 'white');
+                ?>
+                <div data-card-color="<?= e($cardColor) ?>" class="team-card<?= $editing && empty($member['active']) ? ' is-inactive' : '' ?>"<?= $editing ? ' data-edit-item="' . e($ref) . '" data-id="' . (int) $member['id'] . '"' : '' ?>>
                     <img src="/uploads/<?= e($member['photo_path'] ?? '') ?>" alt="<?= e(strip_tags($member['name'])) ?>" width="400" height="400" loading="lazy" <?= edit($ref . ':photo_path', 'image') ?>>
                     <h3 <?= edit($ref . ':name', 'text') ?>><?= rich($member['name'], 'text') ?></h3>
                     <?php if ($editing || !empty($member['role'])): ?>
@@ -33,6 +36,7 @@ ob_start();
             <?php endforeach; ?>
         </div>
         <?php if ($editing): ?>
+        <button type="button" class="editor-add-item" id="team-diagonal-colors">Diagonaal kleurpatroon toepassen</button>
         <button type="button" class="editor-add-item" data-add-item="team" data-template="team-item-template">+ Nieuw teamlid</button>
         <template id="team-item-template">
             <div class="team-card" data-edit-item="team:__ID__" data-id="__ID__">
